@@ -1,2 +1,4 @@
-# git-walktree-el
-WIP
+git-walktree-el
+===============
+
+Walk through git revisions.
