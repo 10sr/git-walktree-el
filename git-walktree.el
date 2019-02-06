@@ -26,6 +26,7 @@
 
 ;;; Code:
 
+(require git-walktree-mode)
 
 (defgroup git-walktree nil
   "Git Walktree."
@@ -421,32 +422,6 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
                    :object (match-string 3)
                    :file (match-string 4)))))))
 
-(defun git-walktree-mode-open-this ()
-  "Open git object of current line."
-  (interactive)
-  (let ((info (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
-                                                                               (point-at-eol)))))
-    (if info
-        (switch-to-buffer
-         (if (string= (plist-get info
-                                 :type)
-                      "commit")
-             ;; For submodule cd to that directory and intialize
-             ;; TODO: Provide way to go back to known "parent" repository
-             (with-temp-buffer
-               (cd (plist-get info :file))
-               (git-walktree--open-noselect (plist-get info
-                                                       :object)
-                                            nil
-                                            (plist-get info
-                                                       :object)))
-           (git-walktree--open-noselect git-walktree-current-committish
-                                        (git-walktree--join-path (plist-get info
-                                                                            :file))
-                                        (plist-get info
-                                                   :object))))
-      (message "No object on current line."))))
-
 (defun git-walktree--join-path (name &optional base)
   "Make path from NAME and BASE.
   If base is omitted or nil use value of `git-walktree-current-path'."
@@ -481,50 +456,6 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
                                                        parent
                                                        nil))
       (message "Cannot find parent directory for current tree."))))
-
-(defun git-walktree-mode--move-to-file ()
-  "Move point to file field of ls-tree output in current line.
-
-  This function do nothing when current line is not ls-tree output."
-  (interactive)
-  (save-match-data
-    (when (save-excursion
-            (goto-char (point-at-bol))
-            (re-search-forward git-walktree-ls-tree-line-regexp
-                               (point-at-eol) t))
-      (goto-char (match-beginning 4)))))
-
-(defun git-walktree-mode-next-line (&optional arg try-vscroll)
-  "Move cursor vertically down ARG lines and move to file field if found."
-  (interactive "^p\np")
-  (or arg (setq arg 1))
-  (line-move arg nil nil try-vscroll)
-  (git-walktree-mode--move-to-file)
-  )
-
-(defun git-walktree-mode-previous-line (&optional arg try-vscroll)
-  "Move cursor vertically up ARG lines and move to file field if found."
-  (interactive "^p\np")
-  (or arg (setq arg 1))
-  (line-move (- arg) nil nil try-vscroll)
-  (git-walktree-mode--move-to-file)
-  )
-
-(defgroup git-walktree-faces nil
-  "Faces used by git-walktree."
-  :group 'git-walktree
-  :group 'faces)
-
-(defface git-walktree-tree-face
-  ;; Same as dired-directory
-  '((t (:inherit font-lock-function-name-face)))
-  "Face used for tree objects."
-  :group 'git-walktree-faces)
-(defface git-walktree-commit-face
-  ;; Same as dired-symlink face
-  '((t (:inherit font-lock-keyword-face)))
-  "Face used for commit objects."
-  :group 'git-walktree-faces)
 
 (defvar git-walktree-known-child-revisions (make-hash-table :test 'equal)
   "Hash of already known pair of commitid -> list of child commitid.
@@ -611,46 +542,6 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
         (cl-assert path)
         (switch-to-buffer (git-walktree--open-noselect-safe-path child
                                                                  path))))))
-
-(defvar git-walktree-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map "n" 'git-walktree-mode-next-line)
-    (define-key map "p" 'git-walktree-mode-previous-line)
-    (define-key map (kbd "C-n") 'git-walktree-mode-next-line)
-    (define-key map (kbd "C-p") 'git-walktree-mode-previous-line)
-    ;; TODO: Review keybind
-    (define-key map "P" 'git-walktree-parent-revision)
-    (define-key map "N" 'git-walktree-known-child-revision)
-    (define-key map "^" 'git-walktree-up)
-    ;; TODO: implement
-    (define-key map (kbd "DEL") 'git-walktree-back)
-    (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
-    map))
-
-(defvar git-walktree-mode-font-lock-keywords
-  `(
-    (,git-walktree-ls-tree-line-regexp . (
-                                          (1 'shadow)
-                                          (3 'shadow)
-                                          ))
-    (,git-walktree-ls-tree-line-tree-regexp . (
-                                               (2 'git-walktree-tree-face)
-                                               (4 'git-walktree-tree-face)
-                                               ))
-    (,git-walktree-ls-tree-line-commit-regexp . (
-                                                 (2 'git-walktree-commit-face)
-                                                 (4 'git-walktree-commit-face)
-                                                 ))
-    )
-  "Syntax highlighting for git-walktree mode.")
-
-(define-derived-mode git-walktree-mode special-mode "GitWalktree"
-  "Major-mode for `git-walktree-open'."
-  (set (make-local-variable 'font-lock-defaults)
-       '(git-walktree-mode-font-lock-keywords
-         nil nil nil nil
-         ))
-  )
 
 (require 'magit nil t)
 ;; (git-revision--git-plumbing "cat-file" "-t" "HEAD")
