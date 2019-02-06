@@ -27,9 +27,9 @@
 ;;; Code:
 
 ;; These variables are defined in git-walktree.el
-(defconst git-walktree-ls-tree-line-regexp)
-(defconst git-walktree-ls-tree-line-tree-regexp)
-(defconst git-walktree-ls-tree-line-commit-regexp)
+(defconst git-walktree-ls-tree-line-regexp nil)
+(defconst git-walktree-ls-tree-line-tree-regexp nil)
+(defconst git-walktree-ls-tree-line-commit-regexp nil)
 (defvar git-walktree-current-committish)
 
 (declare-function git-walktree--parse-lstree-line
