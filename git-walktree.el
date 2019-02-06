@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-(require git-walktree-mode)
+(require 'git-walktree-mode)
 
 (defgroup git-walktree nil
   "Git Walktree."
