@@ -30,8 +30,14 @@
 (defconst git-walktree-ls-tree-line-regexp)
 (defconst git-walktree-ls-tree-line-tree-regexp)
 (defconst git-walktree-ls-tree-line-commit-regexp)
-(defvar git-walktree-current-commitish)
+(defvar git-walktree-current-committish)
 
+(declare-function git-walktree--parse-lstree-line
+                  "git-walktree")
+(declare-function git-walktree--open-noselect
+                  "git-walktree")
+(declare-function git-walktree--join-path
+                  "git-walktree")
 
 (defun git-walktree-mode--move-to-file ()
   "Move point to file field of ls-tree output in current line.
