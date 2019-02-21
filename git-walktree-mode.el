@@ -131,6 +131,7 @@
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
+    ;; TODO: Add C to copy to working directory
     (define-key map "n" 'git-walktree-mode-next-line)
     (define-key map "p" 'git-walktree-mode-previous-line)
     (define-key map (kbd "C-n") 'git-walktree-mode-next-line)
