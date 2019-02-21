@@ -276,6 +276,7 @@ When PATH is omitted or nil, it is calculated from current file or directory."
                                  obj)))
 
 ;; TODO: Store view history
+;; Or add variable like -previously-opened or -referer?
 (defun git-walktree--open-noselect (committish path object)
   "Open buffer to view git object of COMMITTISH:PATH.
 When PATH was given and non-nil open that, otherwise open root tree.
