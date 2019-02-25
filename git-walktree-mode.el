@@ -85,20 +85,7 @@
 
 
 (defvar git-walktree-mode-font-lock-keywords
-  `(
-    (,git-walktree-ls-tree-line-regexp . (
-                                          (1 'shadow)
-                                          (3 'shadow)
-                                          ))
-    (,git-walktree-ls-tree-line-tree-regexp . (
-                                               (2 'git-walktree-tree-face)
-                                               (4 'git-walktree-tree-face)
-                                               ))
-    (,git-walktree-ls-tree-line-commit-regexp . (
-                                                 (2 'git-walktree-commit-face)
-                                                 (4 'git-walktree-commit-face)
-                                                 ))
-    )
+  nil
   "Syntax highlighting for git-walktree mode.")
 
 
@@ -147,10 +134,27 @@
 
 (define-derived-mode git-walktree-mode special-mode "GitWalktree"
   "Major-mode for `git-walktree-open'."
-  (set (make-local-variable 'font-lock-defaults)
-       '(git-walktree-mode-font-lock-keywords
-         nil nil nil nil
-         ))
+  ;; This have to be set in major-mode body because regexps are
+  ;; defined outside of this file.
+  (setq-local git-walktree-mode-font-lock-keywords
+              `(
+                (,git-walktree-ls-tree-line-regexp . (
+                                                      (1 'shadow)
+                                                      (3 'shadow)
+                                                      ))
+                (,git-walktree-ls-tree-line-tree-regexp . (
+                                                           (2 'git-walktree-tree-face)
+                                                           (4 'git-walktree-tree-face)
+                                                           ))
+                (,git-walktree-ls-tree-line-commit-regexp . (
+                                                             (2 'git-walktree-commit-face)
+                                                             (4 'git-walktree-commit-face)
+                                                             ))
+                ))
+  (setq-local font-lock-defaults
+              '(git-walktree-mode-font-lock-keywords
+                nil nil nil nil
+                ))
   )
 
 
