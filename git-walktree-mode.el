@@ -124,6 +124,7 @@
     (define-key map (kbd "C-n") 'git-walktree-mode-next-line)
     (define-key map (kbd "C-p") 'git-walktree-mode-previous-line)
     ;; TODO: Review keybind
+    ;; TODO: Define minor-mode and use also in blob buffer
     (define-key map "P" 'git-walktree-parent-revision)
     (define-key map "N" 'git-walktree-known-child-revision)
     (define-key map "^" 'git-walktree-up)

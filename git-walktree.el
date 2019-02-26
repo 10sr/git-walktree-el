@@ -70,7 +70,7 @@ TYPE is target object type."
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (committish-display (git-walktree--committish-fordisplay committish))
-         (name (format "%s:%s"
+         (name (format "*GitWalkTree<%s:%s>*"
                        (or committish-display "")
                        name)))
 
