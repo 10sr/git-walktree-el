@@ -136,6 +136,8 @@
     ;; TODO: implement
     (define-key map (kbd "DEL") 'git-walktree-back)
     (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
+    ;; TODO: implement
+    (define-key map "C" 'git-walktree-mode-checkout-to)
     map))
 
 (define-derived-mode git-walktree-mode special-mode "GitWalktree"
