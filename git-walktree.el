@@ -73,6 +73,7 @@ TYPE is target object type."
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (committish-display (git-walktree--committish-fordisplay committish))
+         ;; TODO: Fix that buffer name gets too long when name is long
          (name (format "*GitWalkTree<%s:%s>*"
                        (or committish-display "")
                        name)))
