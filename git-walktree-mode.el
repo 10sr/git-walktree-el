@@ -30,6 +30,7 @@
 (defconst git-walktree-ls-tree-line-regexp nil)
 (defconst git-walktree-ls-tree-line-tree-regexp nil)
 (defconst git-walktree-ls-tree-line-commit-regexp nil)
+(defconst git-walktree-ls-tree-line-symlink-regexp nil)
 (defvar git-walktree-current-committish)
 
 (declare-function git-walktree--parse-lstree-line
@@ -78,9 +79,13 @@
   "Face used for tree objects."
   :group 'git-walktree-faces)
 (defface git-walktree-commit-face
+  '((t (:inherit font-lock-constant-face)))
+  "Face used for commit objects."
+  :group 'git-walktree-faces)
+(defface git-walktree-symlink-face
   ;; Same as dired-symlink face
   '((t (:inherit font-lock-keyword-face)))
-  "Face used for commit objects."
+  "Face used for symlink objects."
   :group 'git-walktree-faces)
 
 
@@ -151,6 +156,10 @@
                                                              (2 'git-walktree-commit-face)
                                                              (4 'git-walktree-commit-face)
                                                              ))
+                (,git-walktree-ls-tree-line-symlink-regexp . (
+                                                              (2 'git-walktree-symlink-face)
+                                                              (4 'git-walktree-symlink-face)
+                                                              ))
                 ))
   (setq-local font-lock-defaults
               '(git-walktree-mode-font-lock-keywords

@@ -404,6 +404,9 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 (defconst git-walktree-ls-tree-line-commit-regexp
   "^\\([0-9]\\{6\\}\\) \\(commit\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
   "Regexp for commit line of output of git ls-tree.")
+(defconst git-walktree-ls-tree-line-symlink-regexp
+  "^\\(120[0-9]\\{3\\}\\) \\(blob\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
+  "Regexp for symlink line of output of git ls-tree.")
 (defun git-walktree--parse-lstree-line (str)
   "Extract object info from STR.
 
