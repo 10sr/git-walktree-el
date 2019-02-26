@@ -120,6 +120,9 @@
                                                    :object))))
       (message "No object on current line."))))
 
+(defalias 'git-walktree-mode-goto-revision
+  'git-walktree-open)
+
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
@@ -133,6 +136,7 @@
     (define-key map "P" 'git-walktree-parent-revision)
     (define-key map "N" 'git-walktree-known-child-revision)
     (define-key map "^" 'git-walktree-up)
+    (define-key map "G" 'git-walktree-mode-goto-revision)
     ;; TODO: implement
     (define-key map (kbd "DEL") 'git-walktree-back)
     (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
