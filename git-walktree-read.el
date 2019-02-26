@@ -33,4 +33,6 @@
   (error "magit not found"))
 
 
+(provide 'git-walktree-read)
+
 ;;; git-walktree-read.el ends here
