@@ -286,6 +286,7 @@ When PATH is omitted or nil, it is calculated from current file or directory."
 When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object full sha1  of
 COMMITTISH:PATH without checking it."
+  ;; TODO: Resolve symbolic-ref commitish here?
   (cl-assert committish)
   (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
