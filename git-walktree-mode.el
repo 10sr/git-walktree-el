@@ -153,7 +153,7 @@ This fucntion never return nil and throw error If entry not available."
              (message "%s checked out to %s"
                       (plist-get info :file)
                       dest)
-           (error "Execution failed")))
+           (error "Execution failed"))))
       ("tree"
        (error "Checking out tree is not supported yet"))
       (_
