@@ -141,14 +141,19 @@ This fucntion never return nil and throw error If entry not available."
     (cl-assert info)
     (pcase (plist-get info :type)
       ("blob"
-       (let ((obj (plist-get info :object)))
-         (call-process "git"
-                       nil  ; INFILE
-                       (list :file dest)  ; DESTINATION
-                       nil  ; DISPLAY
-                       "cat-file"  ; ARGS
-                       "-p"
-                       obj)))
+       (let* ((obj (plist-get info :object))
+              (status (call-process "git"
+                                    nil  ; INFILE
+                                    (list :file dest)  ; DESTINATION
+                                    nil  ; DISPLAY
+                                    "cat-file"  ; ARGS
+                                    "-p"
+                                    obj)))
+         (if (eq status 0)
+             (message "%s checked out to %s"
+                      (plist-get info :file)
+                      dest)
+           (error "Execution failed")))
       ("tree"
        (error "Checking out tree is not supported yet"))
       (_
