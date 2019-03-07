@@ -129,9 +129,22 @@ This fucntion never return nil and throw error If entry not available."
 (defalias 'git-walktree-mode-goto-revision
   'git-walktree-open)
 
+(defun git-walktree-checkout-blob (object dest)
+  "Checkout OBJECT into path DEST.
+This function overwrites DEST without asking."
+  (let ((status (call-process "git"
+                              nil  ; INFILE
+                              (list :file dest)  ; DESTINATION
+                              nil  ; DISPLAY
+                              "cat-file"  ; ARGS
+                              "-p"
+                              object)))
+    (unless (eq status 0)
+      (error "Checkout failed"))))
+
 (defun git-walktree-mode-checkout-to (dest)
   "Checkout blob or tree at point into the working directory DEST."
-  (interactive "GFile path to checkout to: ")
+  (interactive "GCheckout to: ")
   (setq dest
         (expand-file-name dest))
   (let ((info (git-walktree-mode--get)))
@@ -141,44 +154,36 @@ This fucntion never return nil and throw error If entry not available."
     (cl-assert info)
     (pcase (plist-get info :type)
       ("blob"
-       (let* ((obj (plist-get info :object))
-              (status (call-process "git"
-                                    nil  ; INFILE
-                                    (list :file dest)  ; DESTINATION
-                                    nil  ; DISPLAY
-                                    "cat-file"  ; ARGS
-                                    "-p"
-                                    obj)))
-         (if (eq status 0)
-             (message "%s checked out to %s"
-                      (plist-get info :file)
-                      dest)
-           (error "Execution failed"))))
+       (let ((obj (plist-get info :object)))
+         (git-walktree-checkout-blob obj dest)
+         (message "%s checked out to %s"
+                  (plist-get info :file)
+                  dest)))
       ("tree"
        (error "Checking out tree is not supported yet"))
       (_
        (error "Cannot checkout this object")))))
 
 
-  (defvar git-walktree-mode-map
-    (let ((map (make-sparse-keymap)))
-      ;; TODO: Add C to copy to working directory
-      (define-key map "n" 'git-walktree-mode-next-line)
-      (define-key map "p" 'git-walktree-mode-previous-line)
-      (define-key map (kbd "C-n") 'git-walktree-mode-next-line)
-      (define-key map (kbd "C-p") 'git-walktree-mode-previous-line)
-      ;; TODO: Review keybind
-      ;; TODO: Define minor-mode and use also in blob buffer
-      (define-key map "P" 'git-walktree-parent-revision)
-      (define-key map "N" 'git-walktree-known-child-revision)
-      (define-key map "^" 'git-walktree-up)
-      (define-key map "G" 'git-walktree-mode-goto-revision)
-      ;; TODO: implement
-      (define-key map (kbd "DEL") 'git-walktree-back)
-      (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
-      ;; TODO: implement
-      (define-key map "C" 'git-walktree-mode-checkout-to)
-      map))
+(defvar git-walktree-mode-map
+  (let ((map (make-sparse-keymap)))
+    ;; TODO: Add C to copy to working directory
+    (define-key map "n" 'git-walktree-mode-next-line)
+    (define-key map "p" 'git-walktree-mode-previous-line)
+    (define-key map (kbd "C-n") 'git-walktree-mode-next-line)
+    (define-key map (kbd "C-p") 'git-walktree-mode-previous-line)
+    ;; TODO: Review keybind
+    ;; TODO: Define minor-mode and use also in blob buffer
+    (define-key map "P" 'git-walktree-parent-revision)
+    (define-key map "N" 'git-walktree-known-child-revision)
+    (define-key map "^" 'git-walktree-up)
+    (define-key map "G" 'git-walktree-mode-goto-revision)
+    ;; TODO: implement
+    (define-key map (kbd "DEL") 'git-walktree-back)
+    (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
+    ;; TODO: implement
+    (define-key map "C" 'git-walktree-mode-checkout-to)
+    map))
 
 (define-derived-mode git-walktree-mode special-mode "GitWalktree"
   "Major-mode for `git-walktree-open'."
