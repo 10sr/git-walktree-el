@@ -80,12 +80,16 @@ TYPE is target object type."
 
     (if (and git-walktree-reuse-tree-buffer
              (string= type "tree"))
-        (with-current-buffer (or git-walktree-tree-buffer-for-reuse
-                                 (setq git-walktree-tree-buffer-for-reuse
-                                       (generate-new-buffer "gitwalktreebuf")))
-          (setq git-walktree-repository-root root)
-          (rename-buffer name t)
-          (current-buffer))
+        (let ((existing
+               (and git-walktree-tree-buffer-for-reuse
+                    (buffer-name git-walktree-tree-buffer-for-reuse)
+                    git-walktree-tree-buffer-for-reuse)))
+          (with-current-buffer (or existing
+                                   (setq git-walktree-tree-buffer-for-reuse
+                                         (generate-new-buffer "gitwalktreebuf")))
+            (setq git-walktree-repository-root root)
+            (rename-buffer name t)
+            (current-buffer)))
       (with-current-buffer (get-buffer-create name)
         (if git-walktree-repository-root
             (if (string= root
