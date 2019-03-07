@@ -252,6 +252,7 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
             (cd dir)))
 
         (view-mode 1)
+        (git-walktree-minor-mode 1)
         ))
     buf))
 

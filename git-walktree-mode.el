@@ -1,4 +1,4 @@
-;;; git-walktree-mode.el --- Major-mode for git-walktree   -*- lexical-binding: t; -*-
+;;; git-walktree-mode.el --- Major-mode and minor-mode for git-walktree   -*- lexical-binding: t; -*-
 
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
 ;; URL: https://github.com/10sr/git-walktree-el
@@ -21,7 +21,10 @@
 
 ;;; Commentary:
 
-;; Major-mode for git-walktree buffer.
+;; Major-mode and minor-mode for git-walktree buffer.
+
+;; git-walktree-mode: Major-mode for git-walktree tree buffer
+;; git-walktree-minor-mode: Minor-mode for git-walktree blob buffer
 
 
 ;;; Code:
@@ -34,6 +37,7 @@
 (defconst git-walktree-ls-tree-line-commit-regexp nil)
 (defconst git-walktree-ls-tree-line-symlink-regexp nil)
 (defvar git-walktree-current-committish)
+(defvar git-walktree-object-full-sha1)
 
 (declare-function git-walktree--parse-lstree-line
                   "git-walktree")
@@ -41,6 +45,23 @@
                   "git-walktree")
 (declare-function git-walktree--join-path
                   "git-walktree")
+
+;; TODO: Move to util
+(defun git-walktree-checkout-blob (object dest)
+  "Checkout OBJECT into path DEST.
+This function overwrites DEST without asking."
+  (let ((status (call-process "git"
+                              nil  ; INFILE
+                              (list :file dest)  ; DESTINATION
+                              nil  ; DISPLAY
+                              "cat-file"  ; ARGS
+                              "-p"
+                              object)))
+    (unless (eq status 0)
+      (error "Checkout failed"))))
+
+
+;; git-walktree-mode (major-mode)
 
 (defun git-walktree-mode--move-to-file ()
   "Move point to file field of ls-tree output in current line.
@@ -68,31 +89,6 @@ This function do nothing when current line is not ls-tree output."
   (line-move (- arg) nil nil try-vscroll)
   (git-walktree-mode--move-to-file)
   )
-
-(defgroup git-walktree-faces nil
-  "Faces used by git-walktree."
-  :group 'git-walktree
-  :group 'faces)
-
-(defface git-walktree-tree-face
-  ;; Same as dired-directory
-  '((t (:inherit font-lock-function-name-face)))
-  "Face used for tree objects."
-  :group 'git-walktree-faces)
-(defface git-walktree-commit-face
-  '((t (:inherit font-lock-constant-face)))
-  "Face used for commit objects."
-  :group 'git-walktree-faces)
-(defface git-walktree-symlink-face
-  ;; Same as dired-symlink face
-  '((t (:inherit font-lock-keyword-face)))
-  "Face used for symlink objects."
-  :group 'git-walktree-faces)
-
-
-(defvar git-walktree-mode-font-lock-keywords
-  nil
-  "Syntax highlighting for git-walktree mode.")
 
 (defun git-walktree-mode--get ()
   "Get object entry info at current line.
@@ -129,19 +125,6 @@ This fucntion never return nil and throw error If entry not available."
 (defalias 'git-walktree-mode-goto-revision
   'git-walktree-open)
 
-(defun git-walktree-checkout-blob (object dest)
-  "Checkout OBJECT into path DEST.
-This function overwrites DEST without asking."
-  (let ((status (call-process "git"
-                              nil  ; INFILE
-                              (list :file dest)  ; DESTINATION
-                              nil  ; DISPLAY
-                              "cat-file"  ; ARGS
-                              "-p"
-                              object)))
-    (unless (eq status 0)
-      (error "Checkout failed"))))
-
 (defun git-walktree-mode-checkout-to (dest)
   "Checkout blob or tree at point into the working directory DEST."
   (interactive "GCheckout to: ")
@@ -164,6 +147,30 @@ This function overwrites DEST without asking."
       (_
        (error "Cannot checkout this object")))))
 
+(defgroup git-walktree-faces nil
+  "Faces used by git-walktree."
+  :group 'git-walktree
+  :group 'faces)
+
+(defface git-walktree-tree-face
+  ;; Same as dired-directory
+  '((t (:inherit font-lock-function-name-face)))
+  "Face used for tree objects."
+  :group 'git-walktree-faces)
+(defface git-walktree-commit-face
+  '((t (:inherit font-lock-constant-face)))
+  "Face used for commit objects."
+  :group 'git-walktree-faces)
+(defface git-walktree-symlink-face
+  ;; Same as dired-symlink face
+  '((t (:inherit font-lock-keyword-face)))
+  "Face used for symlink objects."
+  :group 'git-walktree-faces)
+
+
+(defvar git-walktree-mode-font-lock-keywords
+  nil
+  "Syntax highlighting for git-walktree mode.")
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
@@ -213,6 +220,37 @@ This function overwrites DEST without asking."
                 nil nil nil nil
                 ))
   )
+
+;; git-walktree-minor-mode (minor-mode)
+
+(defun git-walktree-minor-mode-checkout-to (dest)
+  "Checkout current blob into the working directory DEST."
+  (interactive "GCheckout to: ")
+  (setq dest
+        (expand-file-name dest))
+  (let ((obj git-walktree-object-full-sha1))
+    (cl-assert obj)
+    (when (and (file-exists-p dest)
+               (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
+      (error "Canceled by user"))
+    (git-walktree-checkout-blob obj dest)
+    (message "%s checked out to %s"
+             obj
+             dest)))
+
+(defvar git-walktree-minor-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map "C" 'git-walktree-minor-mode-checkout-to)
+    (define-key map "P" 'git-walktree-parent-revision)
+    (define-key map "N" 'git-walktree-known-child-revision)
+    (define-key map "^" 'git-walktree-up)
+    (define-key map "G" 'git-walktree-mode-goto-revision)
+    map)
+  "Keymap for `git-walktree-minor-mode'.")
+
+(define-minor-mode git-walktree-minor-mode
+  "Minor-mode for git-walktree blob buffer.")
+
 
 
 
