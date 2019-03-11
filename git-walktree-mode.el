@@ -174,21 +174,16 @@ This fucntion never return nil and throw error If entry not available."
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))
-    ;; TODO: Add C to copy to working directory
     (define-key map "n" 'git-walktree-mode-next-line)
     (define-key map "p" 'git-walktree-mode-previous-line)
     (define-key map (kbd "C-n") 'git-walktree-mode-next-line)
     (define-key map (kbd "C-p") 'git-walktree-mode-previous-line)
-    ;; TODO: Review keybind
-    ;; TODO: Define minor-mode and use also in blob buffer
     (define-key map "P" 'git-walktree-parent-revision)
     (define-key map "N" 'git-walktree-known-child-revision)
     (define-key map "^" 'git-walktree-up)
     (define-key map "G" 'git-walktree-mode-goto-revision)
-    ;; TODO: implement
     (define-key map (kbd "DEL") 'git-walktree-back)
     (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
-    ;; TODO: implement
     (define-key map "C" 'git-walktree-mode-checkout-to)
     map))
 
