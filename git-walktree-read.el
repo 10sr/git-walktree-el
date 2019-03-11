@@ -26,11 +26,33 @@
 
 ;;; Code:
 
-(if (require 'magit nil t)
+(require 'git)
+
+(defvar git-walktree--read-history nil
+  "History for `git-walktree--read'.")
+
+(defun git-walktree--read (prompt)
+  "Read branch, tag or commit with PROMPT.
+This function is a fallback used when `magit-read-branch-or-commit' is
+ not defined."
+  (make-local-variable 'git-repo)
+  (setq git-repo default-directory)
+  (or (completing-read prompt  ; PROMPT
+                       (nconc (git-branches) (git-tags))  ; COLLECTION
+                       nil  ; PREDICATE
+                       nil  ; REQUIRE-MATCH
+                       (or (thing-at-point 'symbol t)  ; INITIAL-INPUT
+                           (git-on-branch))
+                       'git-walktree--read-history  ; HISTORY
+                       )
+      (user-error "Nothing selected")))
+
+(if (require 'magit-git nil t)
     (fset 'git-walktree-read-branch-or-commit
           'magit-read-branch-or-commit)
-  ;; TODO: Add fallback function
-  (error "magit not found"))
+  (fset 'git-walktree-read-branch-or-commit
+        'git-walktree--read)
+  )
 
 
 (provide 'git-walktree-read)
