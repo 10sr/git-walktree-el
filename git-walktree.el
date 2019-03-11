@@ -1,4 +1,4 @@
-;;; git-walktree.el --- Walk through git revisions   -*- lexical-binding: t; -*-
+;;; git-walktree.el --- Walk through git tree and blob objects   -*- lexical-binding: t; -*-
 
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
 ;; URL: https://github.com/10sr/git-walktree-el
