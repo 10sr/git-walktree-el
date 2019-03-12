@@ -47,7 +47,8 @@ This function is a fallback used when `magit-read-branch-or-commit' is
                        )
       (user-error "Nothing selected")))
 
-(if (require 'magit-git nil t)
+(if (and (require 'magit nil t)
+         (require 'magit-git nil t))
     (fset 'git-walktree-read-branch-or-commit
           'magit-read-branch-or-commit)
   (fset 'git-walktree-read-branch-or-commit
