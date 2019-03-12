@@ -235,6 +235,7 @@ This fucntion never return nil and throw error If entry not available."
 
 (defvar git-walktree-minor-mode-map
   (let ((map (make-sparse-keymap)))
+    ;; TODO: Currently C conflict with view-mode keybind
     (define-key map "C" 'git-walktree-minor-mode-checkout-to)
     (define-key map "P" 'git-walktree-parent-revision)
     (define-key map "N" 'git-walktree-known-child-revision)
