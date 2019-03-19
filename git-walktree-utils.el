@@ -58,7 +58,7 @@ Returns first line of output without newline."
                                       (progn
                                         (goto-char (point-min))
                                         (point-at-eol))))))
-;; (git-revision--git-plumbing "cat-file" "-t" "HEAD")
+;; (git-walktree--git-plumbing "cat-file" "-t" "HEAD")
 
 
 (defun git-walktree--commitish-fordisplay (commitish)
@@ -92,6 +92,23 @@ PATH will be always treated as relative to repository root."
       (plist-get info :object))))
 
 
+(defun git-walktree--choose-commitish (prompt-format collection)
+  "Emit PROMPT-FORMAT and ask user to which commitish of COLLECTION to use.
+When collection has just one element, return the first element without asking."
+  (cl-assert collection)
+  (if (< (length collection) 2)
+      (car collection)
+    (completing-read (format prompt-format
+                             (mapconcat 'git-walktree--commitish-fordisplay
+                                        collection
+                                        " "))
+                     collection
+                     nil
+                     t)))
+
+
+;; Paths in repository
+
 (defun git-walktree--parent-directory (path)
   "Return parent directory of PATH without trailing slash.
 For root directory return \".\".
@@ -101,6 +118,40 @@ If PATH is equal to \".\", return nil."
     (if (string= "." path)
         nil
       ".")))
+
+(defun git-walktree--join-path (name base)
+  "Make path from NAME and BASE."
+  (cl-assert base)
+  (if (string= base ".")
+      name
+    (concat base "/" name)))
+
+(defun git-walktree--path-in-repository (path)
+  "Convert PATH into relative path to repository root.
+Result will not have leading and trailing slashes."
+  (with-temp-buffer
+    (cd (if (file-directory-p path)
+            path
+          (file-name-directory path)))
+    (let ((root (git-walktree--git-plumbing "rev-parse"
+                                            "--show-toplevel")))
+      (file-relative-name (directory-file-name path)
+                          root))))
+
+
+;; Parents and Children of commits
+
+(defun git-walktree--parent-full-sha1 (commitish)
+  "Return list of parent commits of COMMITISH in sha1 string."
+  (let ((type (git-walktree--git-plumbing "cat-file"
+                                          "-t"
+                                          commitish)))
+    (cl-assert (string= type "commit")))
+  (let ((parents (git-walktree--git-plumbing "show"
+                                             "--no-patch"
+                                             "--pretty=format:%P"
+                                             commitish)))
+    (split-string parents)))
 
 (defvar git-walktree-known-child-revisions (make-hash-table :test 'equal)
   "Hash of already known pair of commitid -> list of child commitid.
@@ -125,50 +176,8 @@ PARENT should be a full sha1 object name."
 PARENT should be a full sha1 object name."
   (gethash parent git-walktree-known-child-revisions))
 
-(defun git-walktree--choose-commitish (prompt-format collection)
-  "Emit PROMPT-FORMAT and ask user to which commitish of COLLECTION to use.
-When collection has just one element, return the first element without asking."
-  (cl-assert collection)
-  (if (< (length collection) 2)
-      (car collection)
-    (completing-read (format prompt-format
-                             (mapconcat 'git-walktree--commitish-fordisplay
-                                        collection
-                                        " "))
-                     collection
-                     nil
-                     t)))
 
-(defun git-walktree--join-path (name base)
-  "Make path from NAME and BASE."
-  (cl-assert base)
-  (if (string= base ".")
-      name
-    (concat base "/" name)))
-
-(defun git-walktree--path-in-repository (path)
-  "Convert PATH into relative path to repository root.
-Result will not have leading and trailing slashes."
-  (with-temp-buffer
-    (cd (if (file-directory-p path)
-            path
-          (file-name-directory path)))
-    (let ((root (git-walktree--git-plumbing "rev-parse"
-                                            "--show-toplevel")))
-      (file-relative-name (directory-file-name path)
-                          root))))
-
-(defun git-walktree--parent-full-sha1 (commitish)
-  "Return list of parent commits of COMMITISH in sha1 string."
-  (let ((type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          commitish)))
-    (cl-assert (string= type "commit")))
-  (let ((parents (git-walktree--git-plumbing "show"
-                                             "--no-patch"
-                                             "--pretty=format:%P"
-                                             commitish)))
-    (split-string parents)))
+;; ls-tree output parsing
 
 (defconst git-walktree-ls-tree-line-regexp
   "^\\([0-9]\\{6\\}\\) \\(\\w+\\) \\([0-9a-f]+\\)\t\\(.*\\)$"
