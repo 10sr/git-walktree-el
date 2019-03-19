@@ -35,7 +35,7 @@
 (require 'git-walktree-utils)
 
 ;; These variables are defined in git-walktree.el
-(defvar git-walktree-current-committish)
+(defvar git-walktree-current-commitish)
 (defvar git-walktree-current-path)
 (defvar git-walktree-object-full-sha1)
 
@@ -116,7 +116,7 @@ This fucntion never return nil and throw error If entry not available."
                                         nil
                                         (plist-get info
                                                    :object)))
-       (git-walktree--open-noselect git-walktree-current-committish
+       (git-walktree--open-noselect git-walktree-current-commitish
                                     (git-walktree--join-path (plist-get info
                                                                         :file)
                                                              git-walktree-current-path)

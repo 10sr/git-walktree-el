@@ -62,22 +62,22 @@ Returns first line of output without newline."
 ;; (git-revision--git-plumbing "cat-file" "-t" "HEAD")
 
 
-(defun git-walktree--committish-fordisplay (committish)
-  "Convert COMMITTISH and return is a suitable format for displaying."
-  (if (and committish
+(defun git-walktree--commitish-fordisplay (commitish)
+  "Convert COMMITISH and return is a suitable format for displaying."
+  (if (and commitish
            (string-match-p "\\`[0-9a-f]+\\'"
-                           committish)
-           (>= (length committish) 32))
+                           commitish)
+           (>= (length commitish) 32))
       (git-walktree--git-plumbing "rev-parse"
                                   "--short"
-                                  committish)
-    committish))
+                                  commitish)
+    commitish))
 
-(defun git-walktree--resolve-object (committish path)
+(defun git-walktree--resolve-object (commitish path)
   "Return object full sha1 name of COMMITISIH:PATH.
-If path is equal to \".\" return COMMITTISH's root tree object.
+If path is equal to \".\" return COMMITISH's root tree object.
 PATH will be always treated as relative to repository root."
-  (cl-assert committish)
+  (cl-assert commitish)
   (cl-assert path)
   (cl-assert (not (string-match-p "\\`/" path)))
   (cl-assert (not (string-match-p "/\\'" path)))
@@ -85,10 +85,10 @@ PATH will be always treated as relative to repository root."
       (git-walktree--git-plumbing "show"
                                   "--no-patch"
                                   "--pretty=format:%T"
-                                  committish)
+                                  commitish)
     (let ((info (git-walktree--parse-lstree-line (git-walktree--git-plumbing "ls-tree"
                                                                              "--full-tree"
-                                                                             committish
+                                                                             commitish
                                                                              path))))
       (plist-get info :object))))
 
@@ -126,14 +126,14 @@ PARENT should be a full sha1 object name."
 PARENT should be a full sha1 object name."
   (gethash parent git-walktree-known-child-revisions))
 
-(defun git-walktree--choose-committish (prompt-format collection)
-  "Emit PROMPT-FORMAT and ask user to which committish of COLLECTION to use.
+(defun git-walktree--choose-commitish (prompt-format collection)
+  "Emit PROMPT-FORMAT and ask user to which commitish of COLLECTION to use.
 When collection has just one element, return the first element without asking."
   (cl-assert collection)
   (if (< (length collection) 2)
       (car collection)
     (completing-read (format prompt-format
-                             (mapconcat 'git-walktree--committish-fordisplay
+                             (mapconcat 'git-walktree--commitish-fordisplay
                                         collection
                                         " "))
                      collection
@@ -159,16 +159,16 @@ Result will not have leading and trailing slashes."
       (file-relative-name (directory-file-name path)
                           root))))
 
-(defun git-walktree--parent-full-sha1 (committish)
-  "Return list of parent commits of COMMITTISH in sha1 string."
+(defun git-walktree--parent-full-sha1 (commitish)
+  "Return list of parent commits of COMMITISH in sha1 string."
   (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
-                                          committish)))
+                                          commitish)))
     (cl-assert (string= type "commit")))
   (let ((parents (git-walktree--git-plumbing "show"
                                              "--no-patch"
                                              "--pretty=format:%P"
-                                             committish)))
+                                             commitish)))
     (split-string parents)))
 
 (defconst git-walktree-ls-tree-line-regexp
