@@ -27,6 +27,8 @@
 
 ;;; Code:
 
+(require 'ansi-color)
+
 (require 'git-walktree-utils)
 (require 'git-walktree-mode)
 (require 'git-walktree-read)
@@ -124,7 +126,6 @@ It also copy text overlays."
                       end
                       target)))))
 
-(require 'ansi-color)
 (defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of COMMITISH:PATH.
 
