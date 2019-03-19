@@ -192,18 +192,17 @@ STR should be a string like following without newline.:
 100644 blob 6fd4d58202d0b46547c6fe43de0f8c878456f966	.editorconfig
 
 Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
-  (let (result mode type object file)
-    (save-match-data
-      (with-temp-buffer
-        (insert str)
-        (goto-char (point-min))
-        (and (re-search-forward git-walktree-ls-tree-line-regexp
-                                nil
-                                t)
-             (list :mode (match-string 1)
-                   :type (match-string 2)
-                   :object (match-string 3)
-                   :file (match-string 4)))))))
+  (save-match-data
+    (with-temp-buffer
+      (insert str)
+      (goto-char (point-min))
+      (when (re-search-forward git-walktree-ls-tree-line-regexp
+                               nil
+                               t)
+        (list :mode (match-string 1)
+              :type (match-string 2)
+              :object (match-string 3)
+              :file (match-string 4))))))
 
 (provide 'git-walktree-utils)
 
