@@ -37,6 +37,21 @@
   :prefix "git-walktree-"
   :group 'tools)
 
+(defcustom git-walktree-reuse-tree-buffer t
+  "Non-nil to reuse buffer for treeish object."
+  :type 'boolean
+  :group 'git-walktree)
+
+(defcustom git-walktree-try-cd t
+  "Try to cd if directory exists in current working directory if non-nil.
+Otherwise use repository root for gitwalktree buffer's `default-directory'."
+  :type 'boolean
+  :group 'git-walktree)
+
+
+(defvar git-walktree-tree-buffer-for-reuse nil
+  "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil.")
+
 (defvar-local git-walktree-current-committish nil
   "Committish name of currently browsing.")
 
@@ -320,21 +335,6 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
   (switch-to-buffer (git-walktree--open-noselect-safe-path committish path)))
 ;;;###autoload
 (defalias 'git-walktree 'git-walktree-open)
-
-(defcustom git-walktree-try-cd t
-  "Try to cd if directory exists in current working directory if non-nil.
-Otherwise use repository root for gitwalktree buffer's `default-directory'."
-  :type 'boolean
-  :group 'git-walktree)
-
-(defcustom git-walktree-reuse-tree-buffer t
-  "Non-nil to reuse buffer for treeish object."
-  :type 'boolean
-  :group 'git-walktree)
-
-(defvar git-walktree-tree-buffer-for-reuse nil
-  "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil.")
-
 
 (defun git-walktree-up (&optional committish path)
   "Open parent directory of COMMITTISH and PATH.

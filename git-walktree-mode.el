@@ -36,6 +36,7 @@
 
 ;; These variables are defined in git-walktree.el
 (defvar git-walktree-current-committish)
+(defvar git-walktree-current-path)
 (defvar git-walktree-object-full-sha1)
 
 (declare-function git-walktree--open-noselect
