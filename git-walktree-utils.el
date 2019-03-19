@@ -31,13 +31,12 @@
 ;;   - do not create buffers
 ;;   - do not modify states of existing buffers
 ;;   - do not modify variables that can be used outside of this file
-;; This file also has some constant variables.
+;; This file also has some variables.
 
 (defcustom git-walktree-git-executable "git"
   "Git executable."
   :type 'string
   :group 'git-walktree)
-
 
 (defun git-walktree--git-plumbing (&rest args)
   "Run git plubming command with ARGS.

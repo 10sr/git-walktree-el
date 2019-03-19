@@ -46,7 +46,7 @@
 (defun git-walktree-checkout-blob (object dest)
   "Checkout OBJECT into path DEST.
 This function overwrites DEST without asking."
-  (let ((status (call-process "git"
+  (let ((status (call-process git-walktree-git-executable
                               nil  ; INFILE
                               (list :file dest)  ; DESTINATION
                               nil  ; DISPLAY
