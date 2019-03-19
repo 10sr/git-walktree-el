@@ -173,7 +173,28 @@ This fucntion never return nil and throw error If entry not available."
 
 
 (defvar git-walktree-mode-font-lock-keywords
-  nil
+  `(
+    (,git-walktree-ls-tree-line-regexp
+     . (
+        (1 'shadow)
+        (3 'shadow)
+        ))
+    (,git-walktree-ls-tree-line-tree-regexp
+     . (
+        (2 'git-walktree-tree-face)
+        (4 'git-walktree-tree-face)
+        ))
+    (,git-walktree-ls-tree-line-commit-regexp
+     . (
+        (2 'git-walktree-commit-face)
+        (4 'git-walktree-commit-face)
+        ))
+    (,git-walktree-ls-tree-line-symlink-regexp
+     . (
+        (2 'git-walktree-symlink-face)
+        (4 'git-walktree-symlink-face)
+        ))
+    )
   "Syntax highlighting for git-walktree mode.")
 
 (defvar git-walktree-mode-map
@@ -193,27 +214,6 @@ This fucntion never return nil and throw error If entry not available."
 
 (define-derived-mode git-walktree-mode special-mode "GitWalktree"
   "Major-mode for `git-walktree-open'."
-  ;; This have to be set in major-mode body because regexps are
-  ;; defined outside of this file.
-  (setq-local git-walktree-mode-font-lock-keywords
-              `(
-                (,git-walktree-ls-tree-line-regexp . (
-                                                      (1 'shadow)
-                                                      (3 'shadow)
-                                                      ))
-                (,git-walktree-ls-tree-line-tree-regexp . (
-                                                           (2 'git-walktree-tree-face)
-                                                           (4 'git-walktree-tree-face)
-                                                           ))
-                (,git-walktree-ls-tree-line-commit-regexp . (
-                                                             (2 'git-walktree-commit-face)
-                                                             (4 'git-walktree-commit-face)
-                                                             ))
-                (,git-walktree-ls-tree-line-symlink-regexp . (
-                                                              (2 'git-walktree-symlink-face)
-                                                              (4 'git-walktree-symlink-face)
-                                                              ))
-                ))
   (setq-local font-lock-defaults
               '(git-walktree-mode-font-lock-keywords
                 nil nil nil nil
