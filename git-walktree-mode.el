@@ -128,11 +128,14 @@ This fucntion never return nil and throw error If entry not available."
 
 (defun git-walktree-mode-checkout-to (dest)
   "Checkout blob or tree at point into the working directory DEST."
+  ;; TODO: Default to path + name
+  (declare (intearctive-only t))
   (interactive "GCheckout to: ")
   (setq dest
         (expand-file-name dest))
   (let ((info (git-walktree-mode--get)))
     (when (and (file-exists-p dest)
+               ;; TODO: Do not ask when cannot checkout
                (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
       (error "Canceled by user"))
     (cl-assert info)
