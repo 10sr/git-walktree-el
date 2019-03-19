@@ -109,6 +109,18 @@ When collection has just one element, return the first element without asking."
 
 ;; Paths in repository
 
+(defun git-walktree--path-in-repository (fullpath)
+  "Convert FULLPATH into relative path to repository root.
+Result will not have leading and trailing slashes."
+  (with-temp-buffer
+    (cd (if (file-directory-p fullpath)
+            fullpath
+          (file-name-directory fullpath)))
+    (let ((root (git-walktree--git-plumbing "rev-parse"
+                                            "--show-toplevel")))
+      (file-relative-name (directory-file-name fullpath)
+                          root))))
+
 (defun git-walktree--parent-directory (path)
   "Return parent directory of PATH without trailing slash.
 For root directory return \".\".
@@ -125,18 +137,6 @@ If PATH is equal to \".\", return nil."
   (if (string= base ".")
       name
     (concat base "/" name)))
-
-(defun git-walktree--path-in-repository (path)
-  "Convert PATH into relative path to repository root.
-Result will not have leading and trailing slashes."
-  (with-temp-buffer
-    (cd (if (file-directory-p path)
-            path
-          (file-name-directory path)))
-    (let ((root (git-walktree--git-plumbing "rev-parse"
-                                            "--show-toplevel")))
-      (file-relative-name (directory-file-name path)
-                          root))))
 
 
 ;; Parents and Children of commits
