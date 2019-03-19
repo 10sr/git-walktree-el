@@ -32,19 +32,13 @@
 
 (require 'cl-lib)
 
+(require 'git-walktree-utils)
+
 ;; These variables are defined in git-walktree.el
-(defconst git-walktree-ls-tree-line-regexp nil)
-(defconst git-walktree-ls-tree-line-tree-regexp nil)
-(defconst git-walktree-ls-tree-line-commit-regexp nil)
-(defconst git-walktree-ls-tree-line-symlink-regexp nil)
 (defvar git-walktree-current-committish)
 (defvar git-walktree-object-full-sha1)
 
-(declare-function git-walktree--parse-lstree-line
-                  "git-walktree")
 (declare-function git-walktree--open-noselect
-                  "git-walktree")
-(declare-function git-walktree--join-path
                   "git-walktree")
 
 ;; TODO: Move to util
@@ -76,7 +70,9 @@ This function do nothing when current line is not ls-tree output."
       (goto-char (match-beginning 4)))))
 
 (defun git-walktree-mode-next-line (&optional arg try-vscroll)
-  "Move cursor vertically down ARG lines and move to file field if found."
+  "Move cursor vertically down ARG lines and move to file field if found.
+
+For TRY-VSCROLL see doc of `move-line'."
   (interactive "^p\np")
   (or arg (setq arg 1))
   (line-move arg nil nil try-vscroll)
@@ -84,7 +80,9 @@ This function do nothing when current line is not ls-tree output."
   )
 
 (defun git-walktree-mode-previous-line (&optional arg try-vscroll)
-  "Move cursor vertically up ARG lines and move to file field if found."
+  "Move cursor vertically up ARG lines and move to file field if found.
+
+For TRY-VSCROLL see doc of `move-line'."
   (interactive "^p\np")
   (or arg (setq arg 1))
   (line-move (- arg) nil nil try-vscroll)
@@ -119,7 +117,8 @@ This fucntion never return nil and throw error If entry not available."
                                                    :object)))
        (git-walktree--open-noselect git-walktree-current-committish
                                     (git-walktree--join-path (plist-get info
-                                                                        :file))
+                                                                        :file)
+                                                             git-walktree-current-path)
                                     (plist-get info
                                                :object))))))
 
@@ -129,7 +128,7 @@ This fucntion never return nil and throw error If entry not available."
 (defun git-walktree-mode-checkout-to (dest)
   "Checkout blob or tree at point into the working directory DEST."
   ;; TODO: Default to path + name
-  (declare (intearctive-only t))
+  (declare (interactive-only t))
   (interactive "GCheckout to: ")
   (setq dest
         (expand-file-name dest))
