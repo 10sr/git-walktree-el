@@ -128,7 +128,7 @@ This fucntion never return nil and throw error If entry not available."
 
 (defun git-walktree-mode-checkout-to (dest)
   "Checkout blob or tree at point into the working directory DEST."
-  ;; TODO: Default to path + name
+  ;; TODO: When DEST is a directory append the name to DEST
   (declare (interactive-only t))
   (interactive "GCheckout to: ")
   (setq dest
@@ -225,6 +225,7 @@ This fucntion never return nil and throw error If entry not available."
 (defun git-walktree-minor-mode-checkout-to (dest)
   "Checkout current blob into the working directory DEST."
   (interactive "GCheckout to: ")
+  ;; TODO: When DEST is a directory append the name to DEST
   (setq dest
         (expand-file-name dest))
   (let ((obj git-walktree-object-full-sha1))
