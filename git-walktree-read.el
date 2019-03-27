@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'git)
+(defvar git-repo)
 
 (defvar git-walktree--read-history nil
   "History for `git-walktree--read'.")
@@ -36,17 +37,18 @@
   "Read branch, tag or commit with PROMPT.
 This function is a fallback used when `magit-read-branch-or-commit' is
  not defined."
-  (make-local-variable 'git-repo)
-  (setq git-repo default-directory)
-  (or (completing-read prompt  ; PROMPT
-                       (nconc (git-branches) (git-tags))  ; COLLECTION
-                       nil  ; PREDICATE
-                       nil  ; REQUIRE-MATCH
-                       (or (thing-at-point 'symbol t)  ; INITIAL-INPUT
-                           (git-on-branch))
-                       'git-walktree--read-history  ; HISTORY
-                       )
-      (user-error "Nothing selected")))
+  (with-temp-buffer
+    (make-local-variable 'git-repo)
+    (setq git-repo default-directory)
+    (or (completing-read prompt  ; PROMPT
+                         (nconc (git-branches) (git-tags))  ; COLLECTION
+                         nil  ; PREDICATE
+                         nil  ; REQUIRE-MATCH
+                         (or (thing-at-point 'symbol t)  ; INITIAL-INPUT
+                             (git-on-branch))
+                         'git-walktree--read-history  ; HISTORY
+                         )
+        (user-error "Nothing selected"))))
 
 (if (and (require 'magit nil t)
          (require 'magit-git nil t))
