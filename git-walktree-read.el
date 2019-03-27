@@ -1,9 +1,6 @@
 ;;; git-walktree-read.el --- Read commitish from minibuffer   -*- lexical-binding: t; -*-
 
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
-;; URL: https://github.com/10sr/git-walktree-el
-;; Version: 0.0.1
-;; Keywords: utility git
 
 ;; This file is not part of GNU Emacs.
 

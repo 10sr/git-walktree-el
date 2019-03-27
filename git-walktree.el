@@ -4,6 +4,7 @@
 ;; URL: https://github.com/10sr/git-walktree-el
 ;; Version: 0.0.1
 ;; Keywords: utility git
+;; Package-Requires: ((git "0.1.1"))
 
 ;; This file is not part of GNU Emacs.
 

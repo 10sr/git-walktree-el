@@ -1,8 +1,6 @@
 ;;; git-walktree-utils.el --- Utilities for git-walktree   -*- lexical-binding: t; -*-
 
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
-;; URL: https://github.com/10sr/git-walktree-el
-;; Keywords: utility git
 
 ;; This file is not part of GNU Emacs.
 
