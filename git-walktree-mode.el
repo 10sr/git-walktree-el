@@ -219,7 +219,7 @@ This fucntion never return nil and throw error If entry not available."
 
 ;; git-walktree-minor-mode (minor-mode)
 
-(defun git-walktree-minor-mode-checkout-to (dest)
+(cl-defun git-walktree-minor-mode-checkout-to (dest)
   "Checkout current blob into the working directory DEST."
   ;; TODO: Is it really required?
   (declare (interactive-only git-walktree-checkout-blob))
@@ -239,7 +239,8 @@ This fucntion never return nil and throw error If entry not available."
     (cl-assert obj)
     (when (and (file-exists-p dest)
                (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
-      (error "Canceled by user"))
+      (message "Canceled by user")
+      (cl-return-from git-walktree-minor-mode-checkout-to))
     (git-walktree-checkout-blob obj dest)
     (message "%s checked out to %s"
              obj
