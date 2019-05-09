@@ -53,6 +53,14 @@ This function overwrites DEST without asking."
     (unless (eq status 0)
       (error "Checkout failed"))))
 
+;; TODO git-walktree-checkout-tree
+;; git read-tree --prefix=rescue --index-output=idx 2f9912a
+;; GIT_INDEX_FILE=idx git checkout-index -a
+;; Or
+;; GIT_INDEX_FILE=idx git read-tree 2f9912a
+;; GIT_INDEX_FILE=idx git checkout-index -a --prefix=rescue/  # Require last slash
+
+
 
 ;; git-walktree-mode (major-mode)
 
