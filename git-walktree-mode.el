@@ -221,6 +221,7 @@ This fucntion never return nil and throw error If entry not available."
 
 (defun git-walktree-minor-mode-checkout-to (dest)
   "Checkout current blob into the working directory DEST."
+  (declare (interactive-only t))
   (interactive "GCheckout to: ")
   ;; TODO: When DEST is a directory append the name to DEST
   (setq dest
