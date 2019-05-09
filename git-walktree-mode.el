@@ -39,7 +39,7 @@
 (declare-function git-walktree--open-noselect
                   "git-walktree")
 
-;; TODO: Move to util
+;; TODO: Move to another file?
 (defun git-walktree-checkout-blob (object dest)
   "Checkout OBJECT into path DEST.
 This function overwrites DEST without asking."
