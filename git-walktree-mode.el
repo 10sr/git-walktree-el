@@ -123,26 +123,31 @@ This fucntion never return nil and throw error If entry not available."
 (defalias 'git-walktree-mode-goto-revision
   'git-walktree-open)
 
-(defun git-walktree-mode-checkout-to (dest)
+(cl-defun git-walktree-mode-checkout-to (dest)
   "Checkout blob or tree at point into the working directory DEST."
-  ;; TODO: When DEST is a directory append the name to DEST
   (declare (interactive-only t))
   (interactive "GCheckout to: ")
   (setq dest
         (expand-file-name dest))
   (let ((info (git-walktree-mode--get)))
-    (when (and (file-exists-p dest)
-               ;; TODO: Do not ask when cannot checkout
-               (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
-      (error "Canceled by user"))
     (cl-assert info)
     (pcase (plist-get info :type)
+
       ("blob"
-       (let ((obj (plist-get info :object)))
-         (git-walktree-checkout-blob obj dest)
-         (message "%s checked out to %s"
-                  (plist-get info :file)
-                  dest)))
+       ;; When DEST is a directory append the name to DEST
+       (when (file-directory-p dest)
+         (let* ((name (plist-get info :file))
+                (name (file-name-nondirectory name)))
+           (setq dest (expand-file-name name dest))))
+       (when (and (file-exists-p dest)
+                  (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
+         (message "Canceled by user")
+         (cl-return-from git-walktree-mode-checkout-to))
+       (git-walktree-checkout-blob (plist-get info :object) dest)
+       (message "%s checked out to %s"
+                (plist-get info :file)
+                dest))
+
       ("tree"
        (error "Checking out tree is not supported yet"))
       (_
