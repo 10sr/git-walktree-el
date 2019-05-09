@@ -221,6 +221,7 @@ This fucntion never return nil and throw error If entry not available."
 
 (defun git-walktree-minor-mode-checkout-to (dest)
   "Checkout current blob into the working directory DEST."
+  ;; TODO: Is it really required?
   (declare (interactive-only git-walktree-checkout-blob))
   (interactive
    (list (let ((current-path (expand-file-name git-walktree-current-path
