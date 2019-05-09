@@ -90,6 +90,7 @@ For TRY-VSCROLL see doc of `move-line'."
 (defun git-walktree-mode--get ()
   "Get object entry info at current line.
 This fucntion never return nil and throw error If entry not available."
+  ;; TODO: Add safe flag
   (or (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
                                                                        (point-at-eol)))
       (error "No object entry on current line")))
@@ -124,12 +125,23 @@ This fucntion never return nil and throw error If entry not available."
   'git-walktree-open)
 
 (cl-defun git-walktree-mode-checkout-to (dest)
-  "Checkout blob or tree at point into the working directory DEST."
+  "Checkout blob or tree at point into DEST."
   (declare (interactive-only t))
-  (interactive "GCheckout to: ")
+  (interactive
+   (list (let ((default (expand-file-name git-walktree-current-path
+                                          git-walktree-repository-root))
+               (info (git-walktree-mode--get)))
+           (when info
+             (setq default
+                   (expand-file-name (plist-get info :file)
+                                     default)))
+           (read-file-name "Checkout to: "
+                           default
+                           default))))
   (setq dest
         (expand-file-name dest))
   (let ((info (git-walktree-mode--get)))
+    ;; TODO: When point is not on ls-tree lines, checkout current tree object
     (cl-assert info)
     (pcase (plist-get info :type)
 
