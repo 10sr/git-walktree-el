@@ -87,13 +87,16 @@ For TRY-VSCROLL see doc of `move-line'."
   (git-walktree-mode--move-to-file)
   )
 
-(defun git-walktree-mode--get ()
+(defun git-walktree-mode--get (&optional safe)
   "Get object entry info at current line.
-This fucntion never return nil and throw error If entry not available."
-  ;; TODO: Add safe flag
+This fucntion throws error If entry not available.
+
+If optional arg SAFE is non-nil, do not error when no entry on current line,
+instead return nil."
   (or (git-walktree--parse-lstree-line (buffer-substring-no-properties (point-at-bol)
                                                                        (point-at-eol)))
-      (error "No object entry on current line")))
+      (unless safe
+        (error "No object entry on current line"))))
 
 
 (defun git-walktree-mode-open-this ()
@@ -130,7 +133,7 @@ This fucntion never return nil and throw error If entry not available."
   (interactive
    (list (let ((default (expand-file-name git-walktree-current-path
                                           git-walktree-repository-root))
-               (info (git-walktree-mode--get)))
+               (info (git-walktree-mode--get t)))
            (when info
              (setq default
                    (expand-file-name (plist-get info :file)
