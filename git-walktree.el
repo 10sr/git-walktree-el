@@ -83,10 +83,9 @@ TYPE is target object type."
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (commitish-display (git-walktree--commitish-fordisplay commitish))
-         ;; TODO: Fix that buffer name gets too long when name is long
          (name (format "*GitWalkTree<%s:%s>*"
                        (or commitish-display "")
-                       name)))
+                       (file-name-nondirectory name))))
 
     (if (and git-walktree-reuse-tree-buffer
              (string= type "tree"))
