@@ -277,6 +277,7 @@ instead return nil."
 
 (define-derived-mode git-walktree-mode special-mode "GitWalktree"
   "Major-mode for `git-walktree-open'."
+  ;; TODO: Implement revert
   (setq-local font-lock-defaults
               '(git-walktree-mode-font-lock-keywords
                 nil nil nil nil
