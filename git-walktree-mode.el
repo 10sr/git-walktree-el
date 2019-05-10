@@ -196,7 +196,10 @@ instead return nil."
          (error "Cannot checkout tree object to a file"))
        ;; TODO: Ask when path already exists as a directory
        (cl-assert (not (file-directory-p dest)))
-       (git-walktree-checkout-tree (plist-get info :object) dest))
+       (git-walktree-checkout-tree (plist-get info :object) dest)
+       (message "%s checked out to %s"
+                (plist-get info :file)
+                dest))
 
       (_
        (error "Cannot checkout this object")))))
