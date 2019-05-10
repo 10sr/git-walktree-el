@@ -52,6 +52,9 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
   :group 'git-walktree)
 
 
+;; See gitglossary(7) for git terminology
+;; https://git-scm.com/docs/gitglossary
+
 (defvar git-walktree-tree-buffer-for-reuse nil
   "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil.")
 

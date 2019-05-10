@@ -39,7 +39,7 @@
 (declare-function git-walktree--open-noselect
                   "git-walktree")
 
-;; TODO: Move to another file?
+;; TODO: Move definition to another file?
 (defun git-walktree-checkout-blob (object dest)
   "Checkout OBJECT into path DEST.
 This function overwrites DEST without asking."
@@ -60,6 +60,25 @@ This function overwrites DEST without asking."
 ;; GIT_INDEX_FILE=idx git read-tree 2f9912a
 ;; GIT_INDEX_FILE=idx git checkout-index -a --prefix=rescue/  # Require last slash
 
+(defun git-walktree-checkout-tree (treeish dest)
+  "Checkout TREEISH into path DEST.
+When DIST is an existing directory, its contents are overwritten without asking."
+  (setq dest
+        (expand-file-name dest))
+  (cl-assert (not (file-regular-p dest)))
+  (setq dest
+        (file-name-as-directory dest))
+  (with-temp-buffer
+    (cd (git-walktree--git-plumbing "rev-parse" "--show-toplevel"))
+    (let* ((process-environment (cl-copy-list process-environment))
+           (gitdir (git-walktree--git-plumbing "rev-parse" "--absolute-git-dir"))
+           (index-file (expand-file-name "git-walktree.index" gitdir)))
+      (setenv "GIT_INDEX_FILE" index-file)
+      (unwind-protect
+          (progn
+            (git-walktree--git-plumbing "read-tree" treeish)
+            (git-walktree--git-plumbing "checkout-index" "-a" "--prefix" dest))
+        (delete-file index-file)))))
 
 
 ;; git-walktree-mode (major-mode)
@@ -143,6 +162,7 @@ instead return nil."
                                           git-walktree-repository-root))
                (info (git-walktree-mode--get t)))
            (when info
+             ;; Append base name of current line to default value
              (setq default
                    (expand-file-name (plist-get info :file)
                                      default)))
@@ -172,7 +192,12 @@ instead return nil."
                 dest))
 
       ("tree"
-       (error "Checking out tree is not supported yet"))
+       (when (file-regular-p dest)
+         (error "Cannot checkout tree object to a file"))
+       ;; TODO: Ask when path already exists as a directory
+       (cl-assert (not (file-directory-p dest)))
+       (git-walktree-checkout-tree (plist-get info :object) dest))
+
       (_
        (error "Cannot checkout this object")))))
 
