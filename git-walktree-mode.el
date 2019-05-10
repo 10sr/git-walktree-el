@@ -71,7 +71,7 @@ When DIST is an existing directory, its contents are overwritten without asking.
     (cd (git-walktree--git-plumbing "rev-parse" "--show-toplevel"))
     (let* ((process-environment (cl-copy-list process-environment))
            (gitdir (git-walktree--git-plumbing "rev-parse" "--absolute-git-dir"))
-           (index-file (expand-file-name "git-walktree.index" gitdir)))
+           (index-file (expand-file-name "tmp-git-walktree-checkout-tree.index" gitdir)))
       (setenv "GIT_INDEX_FILE" index-file)
       (unwind-protect
           (progn
