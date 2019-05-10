@@ -293,6 +293,10 @@ When PATH is omitted or nil, it is calculated from current file or directory."
                                  path
                                  obj)))
 
+(defcustom git-walktree-describe-commitish t
+  "When non-nil, tries to find tag or ref for current commitish.
+Use command  git describe --all --always COMMITISH.")
+
 ;; TODO: Store view history
 ;; Or add variable like -previously-opened or -referer?
 (defun git-walktree--open-noselect (commitish path object)
@@ -300,8 +304,12 @@ When PATH is omitted or nil, it is calculated from current file or directory."
 When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object full sha1  of
 COMMITISH:PATH without checking it."
-  ;; TODO: Resolve symbolic-ref commitish here?
   (cl-assert commitish)
+  (setq commitish
+        (if git-walktree-describe-commitish
+            (git-walktree--git-plumbing "describe" "--all" "--always" commitish)
+          (git-walktree--git-plumbing "rev-parse" commitish)))
+
   (let ((type (git-walktree--git-plumbing "cat-file"
                                           "-t"
                                           commitish)))
