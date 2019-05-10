@@ -170,24 +170,32 @@ instead return nil."
                            default))))
   (setq dest
         (expand-file-name dest))
-  (let ((info (git-walktree-mode--get)))
-    ;; TODO: When point is not on ls-tree lines, checkout current tree object
-    (cl-assert info)
-    (pcase (plist-get info :type)
+  (let (file type object)
+    (let ((info (git-walktree-mode--get t)))
+      (if info
+          (setq file (plist-get info :file)
+                type (plist-get info :type)
+                object (plist-get info :object))
+        (setq file git-walktree-current-path
+              type "tree"
+              object git-walktree-object-full-sha1)))
+    (pcase type
 
       ("blob"
        ;; When DEST is a directory append the name to DEST
        (when (file-directory-p dest)
-         (let* ((name (plist-get info :file))
+         (cl-assert file)
+         (let* ((name file)
                 (name (file-name-nondirectory name)))
            (setq dest (expand-file-name name dest))))
        (when (and (file-exists-p dest)
                   (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
          (message "Canceled by user")
          (cl-return-from git-walktree-mode-checkout-to))
-       (git-walktree-checkout-blob (plist-get info :object) dest)
-       (message "%s checked out to %s"
-                (plist-get info :file)
+       (git-walktree-checkout-blob object dest)
+       (message "%s (%s) checked out to %s"
+                file
+                object
                 dest))
 
       ("tree"
@@ -197,9 +205,10 @@ instead return nil."
                   (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
          (message "Canceled by user")
          (cl-return-from git-walktree-mode-checkout-to))
-       (git-walktree-checkout-tree (plist-get info :object) dest)
-       (message "%s checked out to %s"
-                (plist-get info :file)
+       (git-walktree-checkout-tree object dest)
+       (message "%s (%s) checked out to %s"
+                file
+                object
                 dest))
 
       (_

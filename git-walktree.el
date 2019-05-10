@@ -217,7 +217,8 @@ Result will be inserted into current buffer."
       (error "Failed to call git process %S %S"
              infile
              args))))
-?w
+
+;; TODO: Reuse blob buffer per path
 (defun git-walktree--open-blob (commitish path blob)
   "Open blob object of COMMITISH:PATH.
 BLOB should be a object full sha1 of COMMITISH:PATH."
