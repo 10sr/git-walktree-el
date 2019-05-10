@@ -53,7 +53,6 @@ This function overwrites DEST without asking."
     (unless (eq status 0)
       (error "Checkout failed"))))
 
-;; TODO git-walktree-checkout-tree
 ;; git read-tree --prefix=rescue --index-output=idx 2f9912a
 ;; GIT_INDEX_FILE=idx git checkout-index -a
 ;; Or
@@ -194,7 +193,6 @@ instead return nil."
       ("tree"
        (when (file-regular-p dest)
          (error "Cannot checkout tree object to a file"))
-       ;; TODO: Ask when path already exists as a directory
        (when (and (file-directory-p dest)
                   (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
          (message "Canceled by user")
@@ -280,7 +278,6 @@ instead return nil."
 
 (cl-defun git-walktree-minor-mode-checkout-to (dest)
   "Checkout current blob into the working directory DEST."
-  ;; TODO: Is it really required?
   (declare (interactive-only git-walktree-checkout-blob))
   (interactive
    (list (let ((current-path (expand-file-name git-walktree-current-path
