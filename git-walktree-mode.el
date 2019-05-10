@@ -77,7 +77,7 @@ When DIST is an existing directory, its contents are overwritten without asking.
       (unwind-protect
           (progn
             (git-walktree--git-plumbing "read-tree" treeish)
-            (git-walktree--git-plumbing "checkout-index" "-a" "--prefix" dest))
+            (git-walktree--git-plumbing "checkout-index" "-a" "-f" "--prefix" dest))
         (delete-file index-file)))))
 
 
@@ -195,7 +195,10 @@ instead return nil."
        (when (file-regular-p dest)
          (error "Cannot checkout tree object to a file"))
        ;; TODO: Ask when path already exists as a directory
-       (cl-assert (not (file-directory-p dest)))
+       (when (and (file-directory-p dest)
+                  (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
+         (message "Canceled by user")
+         (cl-return-from git-walktree-mode-checkout-to))
        (git-walktree-checkout-tree (plist-get info :object) dest)
        (message "%s checked out to %s"
                 (plist-get info :file)
