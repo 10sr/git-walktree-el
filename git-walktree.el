@@ -197,7 +197,7 @@ TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
             (cd dir)))
         (when (= (point) (point-min))
           (goto-char point-tree-start)
-          (git-walktree-mode--move-to-file)
+          (git-walktree-mode--move-point-to-file)
           )
         ))
     buf))

@@ -82,7 +82,7 @@ When DIST is an existing directory, its contents are overwritten without asking.
 
 ;; git-walktree-mode (major-mode)
 
-(defun git-walktree-mode--move-to-file ()
+(defun git-walktree-mode--move-point-to-file ()
   "Move point to file field of ls-tree output in current line.
 This function do nothing when current line is not ls-tree output."
   (interactive)
@@ -100,7 +100,7 @@ For TRY-VSCROLL see doc of `move-line'."
   (interactive "^p\np")
   (or arg (setq arg 1))
   (line-move arg nil nil try-vscroll)
-  (git-walktree-mode--move-to-file)
+  (git-walktree-mode--move-point-to-file)
   )
 
 (defun git-walktree-mode-previous-line (&optional arg try-vscroll)
@@ -110,7 +110,7 @@ For TRY-VSCROLL see doc of `move-line'."
   (interactive "^p\np")
   (or arg (setq arg 1))
   (line-move (- arg) nil nil try-vscroll)
-  (git-walktree-mode--move-to-file)
+  (git-walktree-mode--move-point-to-file)
   )
 
 (defun git-walktree-mode--get (&optional safe)
