@@ -77,6 +77,7 @@ This path is always relative to repository root.")
      'permanent-local
      t)
 
+;; TODO: Rewrite using cl-return-from
 (defun git-walktree--create-buffer (commitish name type)
   "Create and return buffer for COMMITISH:NAME.
 TYPE is target object type."
