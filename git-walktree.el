@@ -41,11 +41,21 @@
   :group 'tools)
 
 (defcustom git-walktree-reuse-tree-buffer t
-  "Non-nil to reuse buffer for treeish object.
+  "Non-nil to reuse buffer for treeish objects.
 
-When set to non-nil, reuse one buffer for all treeish object."
+When set to non-nil, reuse one buffer for all treeish objects."
+  ;; TODO: Use different for different root
   :type 'boolean
   :group 'git-walktree)
+
+(defcustom git-walktree-reuse-blob-buffer nil
+  ;; TODO: Not implemented yet
+  "Non-nil to reuse buffer for blob objects.
+
+When set to non-nil, reuse one buffer for blob objects of
+the same file names."
+  :type 'boolean
+  :grouip 'git-walktree)
 
 (defcustom git-walktree-try-cd t
   "Try to cd if directory exists in current working directory if non-nil.
@@ -57,7 +67,6 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
 ;; See gitglossary(7) for git terminology
 ;; https://git-scm.com/docs/gitglossary
 
-;; TODO: Use different for different root
 (defvar git-walktree-tree-buffer-for-reuse nil
   "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil.")
 
