@@ -70,6 +70,9 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
 (defvar git-walktree-tree-buffer-for-reuse nil
   "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil.")
 
+(defvar git-walktree-blob-buffers-for-reuse nil
+  "Buffers to use when 'git-walktree-reuse-blob-buffer' is non-ni.")
+
 (defvar-local git-walktree-current-commitish nil
   "Commitish name of currently browsing.")
 
