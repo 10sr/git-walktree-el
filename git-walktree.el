@@ -78,7 +78,7 @@ This path is always relative to repository root.")
      t)
 
 ;; TODO: Rewrite using cl-return-from
-(defun git-walktree--create-buffer (commitish name type)
+(cl-defun git-walktree--create-buffer (commitish name type)
   "Create and return buffer for COMMITISH:NAME.
 TYPE is target object type."
   (let* ((root (git-walktree--git-plumbing "rev-parse"
@@ -99,7 +99,8 @@ TYPE is target object type."
                                          (generate-new-buffer "gitwalktreebuf")))
             (setq git-walktree-repository-root root)
             (rename-buffer name t)
-            (current-buffer)))
+            (cl-return-from git-walktree--create-buffer
+              (current-buffer))))
       (with-current-buffer (get-buffer-create name)
         (if git-walktree-repository-root
             (if (string= root
@@ -108,10 +109,11 @@ TYPE is target object type."
               ;; If the buffer is for another repository, create new buffer
               (with-current-buffer (generate-new-buffer name)
                 (setq git-walktree-repository-root root)
-                (current-buffer)))
+                (cl-return-from git-walktree--create-buffer (current-buffer))))
           ;; New buffer
           (setq git-walktree-repository-root root)
-          (current-buffer))))))
+          (cl-return-from git-walktree--create-buffer
+            (current-buffer)))))))
 
 (defun git-walktree--replace-into-buffer (target)
   "Replace TARGET buffer contents with that of current buffer.
