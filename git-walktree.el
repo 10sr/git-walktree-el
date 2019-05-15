@@ -41,7 +41,9 @@
   :group 'tools)
 
 (defcustom git-walktree-reuse-tree-buffer t
-  "Non-nil to reuse buffer for treeish object."
+  "Non-nil to reuse buffer for treeish object.
+
+When set to non-nil, reuse one buffer for all treeish object."
   :type 'boolean
   :group 'git-walktree)
 
@@ -55,6 +57,7 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
 ;; See gitglossary(7) for git terminology
 ;; https://git-scm.com/docs/gitglossary
 
+;; TODO: Use different for different root
 (defvar git-walktree-tree-buffer-for-reuse nil
   "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil.")
 
@@ -77,7 +80,8 @@ This path is always relative to repository root.")
      'permanent-local
      t)
 
-;; TODO: Rewrite using cl-return-from
+;; TODO: Fix reusing
+;; TODO: Separate for type
 (cl-defun git-walktree--create-buffer (commitish name type)
   "Create and return buffer for COMMITISH:NAME.
 TYPE is target object type."
@@ -101,20 +105,24 @@ TYPE is target object type."
           (rename-buffer name t)
           (cl-return-from git-walktree--create-buffer
             (current-buffer)))))
+
     (with-current-buffer (get-buffer-create name)
-      (if git-walktree-repository-root
-          (if (string= root
+      (when git-walktree-repository-root
+        (when (string= root
                        git-walktree-repository-root)
-              (cl-return-from git-walktree--create-buffer
-                (current-buffer))
-            ;; If the buffer is for another repository, create new buffer
-            (with-current-buffer (generate-new-buffer name)
-              (setq git-walktree-repository-root root)
-              (cl-return-from git-walktree--create-buffer (current-buffer))))
-        ;; New buffer
-        (setq git-walktree-repository-root root)
-        (cl-return-from git-walktree--create-buffer
-          (current-buffer))))))
+          (cl-return-from git-walktree--create-buffer
+            (current-buffer)))
+
+        ;; If the buffer is for another repository, create new buffer
+        (with-current-buffer (generate-new-buffer name)
+          (setq git-walktree-repository-root root)
+          (cl-return-from git-walktree--create-buffer
+            (current-buffer))))
+
+      ;; New buffer
+      (setq git-walktree-repository-root root)
+      (cl-return-from git-walktree--create-buffer
+        (current-buffer)))))
 
 (defun git-walktree--replace-into-buffer (target)
   "Replace TARGET buffer contents with that of current buffer.
