@@ -88,32 +88,33 @@ TYPE is target object type."
                        (or commitish-display "")
                        (file-name-nondirectory name))))
 
-    (if (and git-walktree-reuse-tree-buffer
-             (string= type "tree"))
-        (let ((existing
-               (and git-walktree-tree-buffer-for-reuse
-                    (buffer-name git-walktree-tree-buffer-for-reuse)
-                    git-walktree-tree-buffer-for-reuse)))
-          (with-current-buffer (or existing
-                                   (setq git-walktree-tree-buffer-for-reuse
-                                         (generate-new-buffer "gitwalktreebuf")))
-            (setq git-walktree-repository-root root)
-            (rename-buffer name t)
-            (cl-return-from git-walktree--create-buffer
-              (current-buffer))))
-      (with-current-buffer (get-buffer-create name)
-        (if git-walktree-repository-root
-            (if (string= root
-                         git-walktree-repository-root)
-                (current-buffer)
-              ;; If the buffer is for another repository, create new buffer
-              (with-current-buffer (generate-new-buffer name)
-                (setq git-walktree-repository-root root)
-                (cl-return-from git-walktree--create-buffer (current-buffer))))
-          ;; New buffer
+    (when (and git-walktree-reuse-tree-buffer
+               (string= type "tree"))
+      (let ((existing
+             (and git-walktree-tree-buffer-for-reuse
+                  (buffer-name git-walktree-tree-buffer-for-reuse)
+                  git-walktree-tree-buffer-for-reuse)))
+        (with-current-buffer (or existing
+                                 (setq git-walktree-tree-buffer-for-reuse
+                                       (generate-new-buffer "gitwalktreebuf")))
           (setq git-walktree-repository-root root)
+          (rename-buffer name t)
           (cl-return-from git-walktree--create-buffer
-            (current-buffer)))))))
+            (current-buffer)))))
+    (with-current-buffer (get-buffer-create name)
+      (if git-walktree-repository-root
+          (if (string= root
+                       git-walktree-repository-root)
+              (cl-return-from git-walktree--create-buffer
+                (current-buffer))
+            ;; If the buffer is for another repository, create new buffer
+            (with-current-buffer (generate-new-buffer name)
+              (setq git-walktree-repository-root root)
+              (cl-return-from git-walktree--create-buffer (current-buffer))))
+        ;; New buffer
+        (setq git-walktree-repository-root root)
+        (cl-return-from git-walktree--create-buffer
+          (current-buffer))))))
 
 (defun git-walktree--replace-into-buffer (target)
   "Replace TARGET buffer contents with that of current buffer.
