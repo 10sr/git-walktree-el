@@ -164,7 +164,7 @@ This path is always relative to repository root.")
 
     (unless git-walktree-dont-reuse-tree-buffer
       (setq buffer
-            (gethash root
+            (gethash hash-key
                      git-walktree-tree-buffers-for-reuse-hash)))
 
     ;; When buffer has been killed set buffer to nil
