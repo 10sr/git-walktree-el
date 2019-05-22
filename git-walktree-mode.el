@@ -323,16 +323,20 @@ instead return nil."
     map)
   "Keymap for `git-walktree-minor-mode'.")
 
-(define-minor-mode git-walktree-minor-mode
-  "Minor-mode for git-walktree blob buffer.")
+(defvar git-walktree-minor-mode-overriding-map-alist
+  (list
+   (cons 'view-mode
+         (let ((map (make-sparse-keymap)))
+           (define-key map "C" 'git-walktree-minor-mode-checkout-to)
+           map)))
+  "Set `minor-mode-overriding-map-alist'.")
 
-;; Make sure that view-mode-map is overwritten
-(let ((pair (assq 'git-walktree-minor-mode
-                  minor-mode-map-alist)))
-  (assq-delete-all 'git-walktree-minor-mode
-                   minor-mode-map-alist)
-  (add-to-list 'minor-mode-map-alist
-               pair))
+(define-minor-mode git-walktree-minor-mode
+  "Minor-mode for git-walktree blob buffer."
+  (if git-walktree-minor-mode
+      (setq minor-mode-overriding-map-alist
+            (append git-walktree-minor-mode-overriding-map-alist
+                    minor-mode-overriding-map-alist))))
 
 
 (provide 'git-walktree-mode)
