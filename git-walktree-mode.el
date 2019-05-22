@@ -332,6 +332,7 @@ instead return nil."
   "Set `minor-mode-overriding-map-alist'.")
 
 (define-minor-mode git-walktree-minor-mode
+  :lighter " GitWalktree"
   "Minor-mode for git-walktree blob buffer."
   (if git-walktree-minor-mode
       (setq minor-mode-overriding-map-alist
