@@ -40,22 +40,20 @@
   :prefix "git-walktree-"
   :group 'tools)
 
-(defcustom git-walktree-reuse-tree-buffer t
-  "Non-nil to reuse buffer for treeish objects.
+(defcustom git-walktree-dont-reuse-tree-buffer nil
+  "Non-nil not to reuse buffer for treeish objects.
 
-When set to non-nil, reuse one buffer for all treeish objects."
-  ;; TODO: Use different for different root
+When set to nil, reuse one buffer for treeish objects in a repository."
   :type 'boolean
   :group 'git-walktree)
 
-(defcustom git-walktree-reuse-blob-buffer nil
-  ;; TODO: Not implemented yet
-  "Non-nil to reuse buffer for blob objects.
+(defcustom git-walktree-dont-reuse-blob-buffer nil
+  "Non-nil not to reuse buffer for blob objects.
 
-When set to non-nil, reuse one buffer for blob objects of
+When set to nil, reuse one buffer for blob objects of
 the same file names."
   :type 'boolean
-  :grouip 'git-walktree)
+  :group 'git-walktree)
 
 (defcustom git-walktree-try-cd t
   "Try to cd if directory exists in current working directory if non-nil.
@@ -67,11 +65,11 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
 ;; See gitglossary(7) for git terminology
 ;; https://git-scm.com/docs/gitglossary
 
-(defvar git-walktree-tree-buffer-for-reuse nil
+(defvar git-walktree-tree-buffers-for-reuse-hash (make-hash-table :test 'equal)
   "Buffer to use when `git-walktree-reuse-tree-buffer' is non-nil.")
 
-(defvar git-walktree-blob-buffers-for-reuse nil
-  "Buffers to use when 'git-walktree-reuse-blob-buffer' is non-ni.")
+(defvar git-walktree-blob-buffers-for-reuse-hash (make-hash-table :test 'equal)
+  "Buffers to use when `git-walktree-reuse-blob-buffer' is non-ni.")
 
 (defvar-local git-walktree-current-commitish nil
   "Commitish name of currently browsing.")
@@ -92,49 +90,92 @@ This path is always relative to repository root.")
      'permanent-local
      t)
 
-;; TODO: Fix reusing
-;; TODO: Separate for type
-(cl-defun git-walktree--create-buffer (commitish name type)
-  "Create and return buffer for COMMITISH:NAME.
-TYPE is target object type."
+(defun git-walktree--create-blob-buffer(commitish path)
+  "Create and return buffer for COMMITISH:PATH blob object."
+  (cl-assert (not (string-match-p "\\`/" path)))
+  (cl-assert (not (string-match-p "/\\'" path)))
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (commitish-display (git-walktree--commitish-fordisplay commitish))
-         (name (format "*GitWalkTree<%s:%s>*"
-                       (or commitish-display "")
-                       (file-name-nondirectory name))))
+         (buffer-name (format "*Blob<%s:%s>*"
+                              (or commitish-display "")
+                              (file-name-nondirectory path)))
+         (hash-key (expand-file-name path
+                                     root))
+         (buffer nil))
 
-    (when (and git-walktree-reuse-tree-buffer
-               (string= type "tree"))
-      (let ((existing
-             (and git-walktree-tree-buffer-for-reuse
-                  (buffer-name git-walktree-tree-buffer-for-reuse)
-                  git-walktree-tree-buffer-for-reuse)))
-        (with-current-buffer (or existing
-                                 (setq git-walktree-tree-buffer-for-reuse
-                                       (generate-new-buffer "gitwalktreebuf")))
-          (setq git-walktree-repository-root root)
-          (rename-buffer name t)
-          (cl-return-from git-walktree--create-buffer
-            (current-buffer)))))
+    (unless git-walktree-dont-reuse-blob-buffer
+      (setq buffer
+            (gethash hash-key
+                     git-walktree-blob-buffers-for-reuse-hash)))
 
-    (with-current-buffer (get-buffer-create name)
-      (when git-walktree-repository-root
-        (when (string= root
-                       git-walktree-repository-root)
-          (cl-return-from git-walktree--create-buffer
-            (current-buffer)))
+    ;; When buffer has been killed set buffer to nil
+    (setq buffer (and buffer
+                      (buffer-name buffer)
+                      buffer))
 
-        ;; If the buffer is for another repository, create new buffer
-        (with-current-buffer (generate-new-buffer name)
-          (setq git-walktree-repository-root root)
-          (cl-return-from git-walktree--create-buffer
-            (current-buffer))))
+    (when buffer
+      (with-current-buffer buffer
+        (cl-assert (string= root
+                            git-walktree-repository-root))
+        (unless (string= buffer-name
+                         (buffer-name))
+          (rename-buffer (generate-new-buffer-name
+                          buffer-name)))))
 
-      ;; New buffer
-      (setq git-walktree-repository-root root)
-      (cl-return-from git-walktree--create-buffer
-        (current-buffer)))))
+    (unless buffer
+      (setq buffer (generate-new-buffer buffer-name))
+      (with-current-buffer buffer
+        (setq git-walktree-repository-root
+              root))
+      (puthash hash-key
+               buffer
+               git-walktree-blob-buffers-for-reuse-hash))
+
+    buffer))
+
+(defun git-walktree--create-tree-buffer (commitish path)
+  "Create and return buffer for COMMITISH:PATH tree object."
+  (cl-assert (not (string-match-p "\\`/" path)))
+  (cl-assert (not (string-match-p "/\\'" path)))
+  (let* ((root (git-walktree--git-plumbing "rev-parse"
+                                           "--show-toplevel"))
+         (commitish-display (git-walktree--commitish-fordisplay commitish))
+         (buffer-name (format "*Tree<%s:%s>*"
+                              (or commitish-display "")
+                              (file-name-nondirectory path)))
+         (buffer nil))
+
+    (unless git-walktree-dont-reuse-tree-buffer
+      (setq buffer
+            (gethash root
+                     git-walktree-tree-buffers-for-reuse-hash)))
+
+    ;; When buffer has been killed set buffer to nil
+    (setq buffer (and buffer
+                      (buffer-name buffer)
+                      buffer))
+
+    (when buffer
+      (with-current-buffer buffer
+        (cl-assert (string= root
+                            git-walktree-repository-root))
+        (unless (string= buffer-name
+                         (buffer-name))
+          (rename-buffer (generate-new-buffer-name
+                          buffer-name)))))
+
+    (unless buffer
+      (setq buffer (generate-new-buffer buffer-name))
+      (with-current-buffer buffer
+        (setq git-walktree-repository-root
+              root))
+      (puthash root
+               buffer
+               git-walktree-tree-buffers-for-reuse-hash))
+
+    buffer))
+
 
 (defun git-walktree--replace-into-buffer (target)
   "Replace TARGET buffer contents with that of current buffer.
@@ -163,7 +204,7 @@ TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
          (type (git-walktree--git-plumbing "cat-file"
                                            "-t"
                                            treeish))
-         (buf (git-walktree--create-buffer commitish path type))
+         (buf (git-walktree--create-tree-buffer commitish path))
          )
     (cl-assert (member type
                        '("commit" "tree")))
@@ -241,7 +282,6 @@ Result will be inserted into current buffer."
              infile
              args))))
 
-;; TODO: Reuse blob buffer per path
 (defun git-walktree--open-blob (commitish path blob)
   "Open blob object of COMMITISH:PATH.
 BLOB should be a object full sha1 of COMMITISH:PATH."
@@ -251,12 +291,12 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
   (let* ((type (git-walktree--git-plumbing "cat-file"
                                            "-t"
                                            blob))
-         (buf (git-walktree--create-buffer commitish path type)))
+         (buf (git-walktree--create-blob-buffer commitish path)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
       (unless (string= blob
                        git-walktree-object-full-sha1)
-        ;; For running git command go back to repository root
+        ;; For running git command, go to repository root
         (cd git-walktree-repository-root)
         (let ((inhibit-read-only t))
           (with-temp-buffer
