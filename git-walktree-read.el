@@ -35,8 +35,7 @@
 This function is a fallback used when `magit-read-branch-or-commit' is
  not defined."
   (with-temp-buffer
-    (make-local-variable 'git-repo)
-    (setq git-repo default-directory)
+    (setq-local git-repo default-directory)
     (or (completing-read prompt  ; PROMPT
                          (nconc (git-branches) (git-tags))  ; COLLECTION
                          nil  ; PREDICATE
