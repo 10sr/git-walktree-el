@@ -359,7 +359,9 @@ When PATH is omitted or nil, it is calculated from current file or directory."
 
 (defcustom git-walktree-describe-commitish t
   "When non-nil, tries to find tag or ref for current commitish.
-Use command  git describe --all --always COMMITISH.")
+Use command  git describe --all --always COMMITISH."
+  :type 'boolean
+  :group 'git-walktree)
 
 ;; TODO: Store view history
 ;; Or add variable like -previously-opened or -referer?
