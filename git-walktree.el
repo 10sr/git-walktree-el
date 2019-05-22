@@ -43,7 +43,7 @@
 (defcustom git-walktree-dont-reuse-tree-buffer nil
   "Non-nil not to reuse buffer for treeish objects.
 
-When set to nil, reuse one buffer for treeish objects in a repository."
+When set to nil, reuse one buffer for treeish objects of the same paths."
   :type 'boolean
   :group 'git-walktree)
 
@@ -158,6 +158,8 @@ This path is always relative to repository root.")
          (buffer-name (format "*Tree<%s:%s>*"
                               (or commitish-display "")
                               (file-name-nondirectory path)))
+         (hash-key (expand-file-name path
+                                     root))
          (buffer nil))
 
     (unless git-walktree-dont-reuse-tree-buffer
@@ -184,7 +186,7 @@ This path is always relative to repository root.")
       (with-current-buffer buffer
         (setq git-walktree-repository-root
               root))
-      (puthash root
+      (puthash hash-key
                buffer
                git-walktree-tree-buffers-for-reuse-hash))
 
