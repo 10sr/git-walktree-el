@@ -326,7 +326,13 @@ instead return nil."
 (define-minor-mode git-walktree-minor-mode
   "Minor-mode for git-walktree blob buffer.")
 
-
+;; Make sure to override view-mode-map
+(let ((pair (assq 'git-walktree-minor-mode
+                  minor-mode-map-alist)))
+  (assq-delete-all 'git-walktree-minor-mode
+                   minor-mode-map-alist)
+  (add-to-list 'minor-mode-map-alist
+               pair))
 
 
 (provide 'git-walktree-mode)
