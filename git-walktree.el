@@ -90,7 +90,7 @@ This path is always relative to repository root.")
      'permanent-local
      t)
 
-(defun git-walktree--create-blob-buffer(commitish path)
+(defun git-walktree--get-create-blob-buffer (commitish path)
   "Create and return buffer for COMMITISH:PATH blob object."
   (cl-assert (not (string-match-p "\\`/" path)))
   (cl-assert (not (string-match-p "/\\'" path)))
@@ -134,7 +134,7 @@ This path is always relative to repository root.")
 
     buffer))
 
-(defun git-walktree--create-tree-buffer (commitish path)
+(defun git-walktree--get-create-tree-buffer (commitish path)
   "Create and return buffer for COMMITISH:PATH tree object."
   (cl-assert (not (string-match-p "\\`/" path)))
   (cl-assert (not (string-match-p "/\\'" path)))
@@ -204,7 +204,7 @@ TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
          (type (git-walktree--git-plumbing "cat-file"
                                            "-t"
                                            treeish))
-         (buf (git-walktree--create-tree-buffer commitish path))
+         (buf (git-walktree--get-create-tree-buffer commitish path))
          )
     (cl-assert (member type
                        '("commit" "tree")))
@@ -291,7 +291,7 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
   (let* ((type (git-walktree--git-plumbing "cat-file"
                                            "-t"
                                            blob))
-         (buf (git-walktree--create-blob-buffer commitish path)))
+         (buf (git-walktree--get-create-blob-buffer commitish path)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
       (unless (string= blob
