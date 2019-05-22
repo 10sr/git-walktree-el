@@ -320,13 +320,19 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
                          git-walktree-object-full-sha1)
           ;; For running git command, go to repository root
           (cd git-walktree-repository-root)
-          (let ((inhibit-read-only t))
+          (let ((go-beginning-after-insert (eq (point-min)
+                                               (point-max)))
+                (inhibit-read-only t))
             (with-temp-buffer
               (git-walktree--call-process nil
                                           "cat-file"
                                           "-p"
                                           blob)
-              (git-walktree--replace-into-buffer buf)))
+              (git-walktree--replace-into-buffer buf))
+            ;; When buffer was empty before insertion, set point to
+            ;; beginning of buffer
+            (when go-beginning-after-insert
+              (goto-char (point-min))))
           (setq buffer-file-name
                 (concat git-walktree-repository-root "/" path))
           (normal-mode t)
