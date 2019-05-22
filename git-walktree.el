@@ -144,6 +144,8 @@ This path is always relative to repository root.")
                buffer
                git-walktree-blob-buffers-for-reuse-hash))
 
+    (cl-assert buffer)
+    (cl-assert (buffer-name buffer))
     buffer))
 
 (defun git-walktree--get-create-tree-buffer (commitish path)
@@ -186,6 +188,8 @@ This path is always relative to repository root.")
                buffer
                git-walktree-tree-buffers-for-reuse-hash))
 
+    (cl-assert buffer)
+    (cl-assert (buffer-name buffer))
     buffer))
 
 
@@ -297,7 +301,6 @@ Result will be inserted into current buffer."
 (defun git-walktree--open-blob (commitish path blob)
   "Open blob object of COMMITISH:PATH.
 BLOB should be a object full sha1 of COMMITISH:PATH."
-  (cl-assert commitish)
   (cl-assert path)
   (cl-assert blob)
   (let* ((type (git-walktree--git-plumbing "cat-file"
@@ -306,29 +309,37 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
          (buf (git-walktree--get-create-blob-buffer commitish path)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buf
-      (unless (string= blob
-                       git-walktree-object-full-sha1)
-        ;; For running git command, go to repository root
-        (cd git-walktree-repository-root)
-        (let ((inhibit-read-only t))
-          (with-temp-buffer
-            (git-walktree--call-process nil
-                                        "cat-file"
-                                        "-p"
-                                        blob)
-            (git-walktree--replace-into-buffer buf)))
+      (unless (and (string= git-walktree-current-commitish
+                            commitish)
+                   (string= git-walktree-current-path
+                            path))
+
+        (unless (string= blob
+                         git-walktree-object-full-sha1)
+          ;; For running git command, go to repository root
+          (cd git-walktree-repository-root)
+          (let ((inhibit-read-only t))
+            (with-temp-buffer
+              (git-walktree--call-process nil
+                                          "cat-file"
+                                          "-p"
+                                          blob)
+              (git-walktree--replace-into-buffer buf)))
+          (setq buffer-file-name
+                (concat git-walktree-repository-root "/" path))
+          (normal-mode t)
+          ;; For asking filename when C-xC-s
+          (setq buffer-file-name nil)
+          (set-buffer-modified-p t)
+          (setq git-walktree-object-full-sha1 blob)
+          (view-mode 1)
+          (git-walktree-minor-mode 1))
+
         (setq git-walktree-buffer-file-name
               (concat git-walktree-repository-root "/git@" commitish ":" path))
-        (setq buffer-file-name
-              (concat git-walktree-repository-root "/" path))
-        (normal-mode t)
-        ;; For asking filename when C-xC-s
-        (setq buffer-file-name nil)
-        (set-buffer-modified-p t)
 
         (setq git-walktree-current-commitish commitish)
         (setq git-walktree-current-path path)
-        (setq git-walktree-object-full-sha1 blob)
         (let ((dir (expand-file-name (or (file-name-directory path)
                                          ".")
                                      git-walktree-repository-root)))
@@ -336,8 +347,6 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
                      (file-directory-p dir))
             (cd dir)))
 
-        (view-mode 1)
-        (git-walktree-minor-mode 1)
         ))
     buf))
 
