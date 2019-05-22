@@ -73,16 +73,28 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
 
 (defvar-local git-walktree-current-commitish nil
   "Commitish name of currently browsing.")
+(put 'git-walktree-current-commitish
+     'permanent-local
+     t)
 
 (defvar-local git-walktree-current-path nil
   "Path name currently visiting without leading and trailing slash.
 This path is always relative to repository root.")
+(put 'git-walktree-current-path
+     'permanent-local
+     t)
 
 (defvar-local git-walktree-buffer-file-name nil
   "Psudo filename of current buffer.")
+(put 'git-walktree-buffer-file-name
+     'permanent-local
+     t)
 
 (defvar-local git-walktree-object-full-sha1 nil
   "Object name in full sha1 format of current buffer.")
+(put 'git-walktree-object-full-sha1
+     'permanent-local
+     t)
 
 (defvar-local git-walktree-repository-root nil
   "Repository root path of current buffer.")
