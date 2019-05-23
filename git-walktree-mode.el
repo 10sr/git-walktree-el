@@ -136,6 +136,7 @@ instead return nil."
                   "commit")
          ;; For submodule cd to that directory and intialize
          ;; TODO: Provide way to go back to known "parent" repository
+         ;; TODO: Or ask before switching repository
          (with-temp-buffer
            (cd (plist-get info :file))
            (git-walktree--open-noselect (plist-get info
