@@ -1,4 +1,4 @@
-git-walktree-el
+git-walktree.el
 ===============
 
 Walk through Git tree and blob objects
