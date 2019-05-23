@@ -15,8 +15,8 @@ What is this?
   - Go Parent and child commits of current commit
 - Checkout tree and blob objects to current working directory
 
-Entrypoint
-----------
+Usage and Keybinds
+------------------
 
 **`M-x git-walktree`** Open git-walktree tree browser or blob viewer
 of commit specified by user.
