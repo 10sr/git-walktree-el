@@ -1,16 +1,15 @@
 git-walktree-el
 ===============
 
-Walk through git tree and blob objects
+Walk through Git tree and blob objects
 
 
 What is this?
 -------------
 
-`git-walktree` is a git ls-tree browser.
-It has following features:
+`git-walktree` is a Git `ls-tree` browser with following features:
 
-- Browse tree objects of git commit
+- Browse tree objects of Git commit
   - Go subtrees
   - Visit blob objects
   - Go Parent and child commits of current commit
@@ -24,9 +23,9 @@ of commit specified by user.
 
 In git-walktree buffers, following keybinds can be used:
 
-- <kbd>^</kbd> Visit parent tree object of current path of current commit
-- <kbd>P</kbd> Go tree object of current path of parent commit
-- <kbd>N</kbd> Go tree object of current path of child commit
+- <kbd>^</kbd> Visit parent tree object
+- <kbd>P</kbd> Go parent commit
+- <kbd>N</kbd> Go child commit
 - <kbd>C</kbd> Checkout current blob or tree object
 
 Additionally, in tree object buffer:
