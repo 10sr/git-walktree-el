@@ -104,8 +104,7 @@ This path is always relative to repository root.")
 
 (defun git-walktree--get-create-blob-buffer (commitish path)
   "Create and return buffer for COMMITISH:PATH blob object."
-  (cl-assert (not (string-match-p "\\`/" path)))
-  (cl-assert (not (string-match-p "/\\'" path)))
+  (git-walktree--assert-path path)
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (commitish-display (git-walktree--commitish-fordisplay commitish))
@@ -150,8 +149,7 @@ This path is always relative to repository root.")
 
 (defun git-walktree--get-create-tree-buffer (commitish path)
   "Create and return buffer for COMMITISH:PATH tree object."
-  (cl-assert (not (string-match-p "\\`/" path)))
-  (cl-assert (not (string-match-p "/\\'" path)))
+  (git-walktree--assert-path path)
   (let* ((root (git-walktree--git-plumbing "rev-parse"
                                            "--show-toplevel"))
          (commitish-display (git-walktree--commitish-fordisplay commitish))
@@ -226,7 +224,7 @@ It also copy text overlays."
   "Open git tree buffer of COMMITISH:PATH.
 
 TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
-  (cl-assert path)
+  (git-walktree--assert-path path)
   (cl-assert treeish)
   (let* (point-tree-start
          (type (git-walktree--git-plumbing "cat-file"
@@ -306,7 +304,7 @@ Result will be inserted into current buffer."
 (defun git-walktree--load-blob (commitish path blob)
   "Open blob object of COMMITISH:PATH.
 BLOB should be a object full sha1 of COMMITISH:PATH."
-  (cl-assert path)
+  (git-walktree--assert-path path)
   (cl-assert blob)
   (let* ((type (git-walktree--git-plumbing "cat-file"
                                            "-t"
@@ -375,9 +373,7 @@ When PATH is omitted or nil, it is calculated from current file or directory."
         (or path
             (git-walktree--path-in-repository (or buffer-file-name
                                                   default-directory))))
-  ;; PATH must not start with and end with slashes
-  (cl-assert (not (string-match-p "\\`/" path)))
-  (cl-assert (not (string-match-p "/\\'" path)))
+  (git-walktree--assert-path path)
 
   (let ((obj (git-walktree--resolve-object commitish path)))
     (while (not obj)
@@ -415,9 +411,7 @@ COMMITISH:PATH without checking it."
 
   (setq path (or path
                  "."))
-  ;; PATH must not start with and end with slashes
-  (cl-assert (not (string-match-p "\\`/" path)))
-  (cl-assert (not (string-match-p "/\\'" path)))
+  (git-walktree--assert-path path)
 
   (setq object (or object
                    (git-walktree--resolve-object commitish path)))

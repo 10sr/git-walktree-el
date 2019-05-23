@@ -75,9 +75,7 @@ Returns first line of output without newline."
 If path is equal to \".\" return COMMITISH's root tree object.
 PATH will be always treated as relative to repository root."
   (cl-assert commitish)
-  (cl-assert path)
-  (cl-assert (not (string-match-p "\\`/" path)))
-  (cl-assert (not (string-match-p "/\\'" path)))
+  (git-walktree--assert-path path)
   (if (string= path ".")
       (git-walktree--git-plumbing "show"
                                   "--no-patch"
@@ -107,6 +105,13 @@ When collection has just one element, return the first element without asking."
 
 ;; Paths in repository
 
+(defun git-walktree--assert-path (path)
+  "Assert that PATH is in valid format for use in git-walktree."
+  (cl-assert path)
+  (cl-assert (not (string-match-p "\\`/" path)))
+  (cl-assert (not (string-match-p "/\\'" path)))
+  )
+
 (defun git-walktree--path-in-repository (fullpath)
   "Convert FULLPATH into relative path to repository root.
 Result will not have leading and trailing slashes."
@@ -114,15 +119,18 @@ Result will not have leading and trailing slashes."
     (cd (if (file-directory-p fullpath)
             fullpath
           (file-name-directory fullpath)))
-    (let ((root (git-walktree--git-plumbing "rev-parse"
-                                            "--show-toplevel")))
-      (file-relative-name (directory-file-name fullpath)
-                          root))))
+    (let* ((root (git-walktree--git-plumbing "rev-parse"
+                                             "--show-toplevel"))
+           (path (file-relative-name (directory-file-name fullpath)
+                                     root)))
+      (git-walktree--assert-path path)
+      path)))
 
 (defun git-walktree--parent-directory (path)
   "Return parent directory of PATH without trailing slash.
 For root directory return \".\".
 If PATH is equal to \".\", return nil."
+  (git-walktree--assert-path path)
   (if (string-match-p "/" path)
       (directory-file-name (file-name-directory path))
     (if (string= "." path)
@@ -131,7 +139,8 @@ If PATH is equal to \".\", return nil."
 
 (defun git-walktree--join-path (name base)
   "Make path from NAME and BASE."
-  (cl-assert base)
+  (git-walktree--assert-path name)
+  (git-walktree--assert-path base)
   (if (string= base ".")
       name
     (concat base "/" name)))
