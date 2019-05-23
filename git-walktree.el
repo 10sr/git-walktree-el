@@ -212,6 +212,16 @@ It also copy text overlays."
                       end
                       target)))))
 
+(defvar git-walktree-tree-buffer-show-command
+  '("show"
+    ;; "--no-patch"
+    "--color=always"
+    "--pretty=short"
+    "--decorate"
+    "--stat"
+    )
+  "Command used show current commit object in tree buffer.")
+
 (defun git-walktree--open-treeish (commitish path treeish)
   "Open git tree buffer of COMMITISH:PATH.
 
@@ -242,15 +252,9 @@ TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
             (remove-overlays)
             (with-temp-buffer
               (if commitish
-                  (progn (git-walktree--call-process nil
-                                                     "show"
-                                                     ;; TODO: Make this args configurable
-                                                     ;; "--no-patch"
-                                                     "--color=always"
-                                                     "--pretty=short"
-                                                     "--decorate"
-                                                     "--stat"
-                                                     commitish)
+                  (progn (apply 'git-walktree--call-process nil
+                                `(,@git-walktree-tree-buffer-show-command
+                                  ,commitish))
                          (ansi-color-apply-on-region (point-min)
                                                      (point))
                          (insert "\n")
@@ -264,7 +268,6 @@ TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
                                           "ls-tree"
                                           ;; "-r"
                                           "--abbrev"
-
                                           treeish)
               (git-walktree--replace-into-buffer buf))
             ))
