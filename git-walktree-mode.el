@@ -59,7 +59,6 @@ This function overwrites DEST without asking."
 ;; Or
 ;; GIT_INDEX_FILE=idx git read-tree 2f9912a
 ;; GIT_INDEX_FILE=idx git checkout-index -a --prefix=rescue/  # Require last slash
-
 (defun git-walktree-checkout-tree (treeish dest)
   "Checkout TREEISH into path DEST.
 When DIST is an existing directory, its contents are overwritten without asking."
@@ -156,6 +155,7 @@ instead return nil."
 
 (cl-defun git-walktree-mode-checkout-to (dest)
   "Checkout blob or tree at point into DEST."
+  ;; TODO: Stop using interactive
   (declare (interactive-only t))
   (interactive
    (list (let ((default (expand-file-name git-walktree-current-path
