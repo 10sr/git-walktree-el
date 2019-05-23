@@ -35,6 +35,7 @@
 (defvar git-walktree-current-commitish)
 (defvar git-walktree-current-path)
 (defvar git-walktree-object-full-sha1)
+(defvar git-walktree-repository-root)
 
 (declare-function git-walktree--open-noselect
                   "git-walktree")
