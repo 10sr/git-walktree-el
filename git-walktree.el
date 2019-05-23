@@ -222,7 +222,7 @@ It also copy text overlays."
     )
   "Command used show current commit object in tree buffer.")
 
-(defun git-walktree--open-treeish (commitish path treeish)
+(defun git-walktree--load-treeish (commitish path treeish)
   "Open git tree buffer of COMMITISH:PATH.
 
 TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
@@ -303,7 +303,7 @@ Result will be inserted into current buffer."
              infile
              args))))
 
-(defun git-walktree--open-blob (commitish path blob)
+(defun git-walktree--load-blob (commitish path blob)
   "Open blob object of COMMITISH:PATH.
 BLOB should be a object full sha1 of COMMITISH:PATH."
   (cl-assert path)
@@ -430,9 +430,9 @@ COMMITISH:PATH without checking it."
                                           object)))
     (pcase type
       ((or "commit" "tree")
-       (git-walktree--open-treeish commitish path object))
+       (git-walktree--load-treeish commitish path object))
       ("blob"
-       (git-walktree--open-blob commitish path object))
+       (git-walktree--load-blob commitish path object))
       (_
        (error "Type cannot handle: %s" type)))))
 
