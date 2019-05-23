@@ -343,7 +343,7 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
           (setq buffer-file-name nil)
           (set-buffer-modified-p t)
           (setq git-walktree-object-full-sha1 blob)
-          (view-mode 1)
+          (setq buffer-read-only t)
           (git-walktree-minor-mode 1))
 
         (setq git-walktree-buffer-file-name
