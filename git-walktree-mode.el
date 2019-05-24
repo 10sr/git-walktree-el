@@ -159,6 +159,21 @@ instead return nil."
 (defalias 'git-walktree-mode-goto-revision
   'git-walktree-open)
 
+(defun git-walktree-mode--revert-buffer (&optional ignore-auto noconfirm)
+  "Revert `git-walktree' buffer.
+
+IGNORE-AUTO is ignored.
+When NOCONFIRM is non-nil, do not aask for confirmation at all.
+
+See also `revert-buffer-function' for these arguments."
+  ;; TODO: Do nothing when current commitish is a full-sha1 object
+  (when (or noconfirm
+            (yes-or-no-p "Revert buffer?"))
+    (git-walktree--open-noselect git-walktree-current-commitish
+                                 git-walktree-current-path
+                                 nil
+                                 (current-buffer))))
+
 (cl-defun git-walktree-mode-checkout-to (dest)
   "Checkout blob or tree at point into DEST."
   ;; TODO: Stop using interactive
@@ -284,7 +299,8 @@ instead return nil."
 
 (define-derived-mode git-walktree-mode special-mode "GitWalktree"
   "Major-mode for `git-walktree-open'."
-  ;; TODO: Implement revert
+  (setq-local revert-buffer-function
+              'git-walktree-mode--revert-buffer)
   (setq-local font-lock-defaults
               '(git-walktree-mode-font-lock-keywords
                 nil nil nil nil
@@ -340,7 +356,10 @@ instead return nil."
 
 (define-minor-mode git-walktree-minor-mode
   "Minor-mode for git-walktree blob buffer."
-  :lighter " GitWalktree")
+  :lighter " GitWalktree"
+  (setq-local revert-buffer-function
+              'git-walktree-mode--revert-buffer)
+  )
 
 
 (provide 'git-walktree-mode)
