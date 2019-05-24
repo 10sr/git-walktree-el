@@ -240,8 +240,10 @@ This is used for buffer reverting."
     (cl-assert (member type
                        '("commit" "tree")))
     (with-current-buffer buffer
-      (unless (string= treeish
-                       git-walktree-object-full-sha1)
+      (unless (and (string= commitish
+                            git-walktree-current-commitish)
+                   (string= treeish
+                            git-walktree-object-full-sha1))
         (buffer-disable-undo)
         ;; For running git command go back to repository root
         (cd git-walktree-repository-root)
