@@ -162,17 +162,13 @@ instead return nil."
 (defun git-walktree-mode--revert-buffer (&optional ignore-auto noconfirm)
   "Revert `git-walktree' buffer.
 
-IGNORE-AUTO is ignored.
-When NOCONFIRM is non-nil, do not aask for confirmation at all.
-
-See also `revert-buffer-function' for these arguments."
+Git-walktree sets `revert-buffer-function' to this function.  The args
+IGNORE-AUTO and NOCONFIRM, passed from `revert-buffer', are ignored."
   ;; TODO: Do nothing when current commitish is a full-sha1 object
-  (when (or noconfirm
-            (yes-or-no-p "Revert buffer?"))
-    (git-walktree--open-noselect git-walktree-current-commitish
-                                 git-walktree-current-path
-                                 nil
-                                 (current-buffer))))
+  (git-walktree--open-noselect git-walktree-current-commitish
+                               git-walktree-current-path
+                               nil
+                               (current-buffer)))
 
 (cl-defun git-walktree-mode-checkout-to (dest)
   "Checkout blob or tree at point into DEST."
