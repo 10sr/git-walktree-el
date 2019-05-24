@@ -32,7 +32,7 @@ In git-walktree buffers, following keybinds can be used:
 - <kbd>^</kbd> Visit parent tree object
 - <kbd>P</kbd> Go parent commit
 - <kbd>N</kbd> Go child commit
-- <kbd>C</kbd> Checkout current blob or tree object
+- <kbd>C</kbd> Checkout current blob or tree object to working directory
 
 Additionally, in tree object buffer:
 
