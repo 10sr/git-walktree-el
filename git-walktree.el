@@ -324,7 +324,9 @@ This is used for buffer reverting."
       (unless (and (string= git-walktree-current-commitish
                             commitish)
                    (string= git-walktree-current-path
-                            path))
+                            path)
+                   (string= git-walktree-object-full-sha1
+                            blob))
 
         (unless (string= blob
                          git-walktree-object-full-sha1)
