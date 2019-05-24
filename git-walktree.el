@@ -198,6 +198,9 @@ This path is always relative to repository root.")
 It also copy text overlays."
   (let ((src (current-buffer)))
     (with-current-buffer target
+      (let ((overlays (lverlays-in (point-min) (point-max))))
+        (dolist (o overlays)
+          (delete-overlay o)))
       (replace-buffer-contents src)))
 
   ;; Copy color overlays
