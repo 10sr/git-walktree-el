@@ -10,19 +10,19 @@ What is this?
 `git-walktree` is a Git `ls-tree` browser.
 It has following features:
 
-- Browse tree objects of arbitrary commits without checking them out
+- Browse tree objects of arbitrary revisions without checking them out
   - Go subtrees
   - Visit blob objects
-  - Go Parent and child commits of commit currently browsing
+  - Go Parent and child revisions
 - Checkout (output) tree or blob object to current working directory
 
 Usage and Keybinds
 ------------------
 
 **<kbd>M-x git-walktree</kbd>** to open git-walktree buffer.
-Prompt user for commit to show.
+Prompt user for revision to show.
 
-- When current buffer is visiting a file and it exists in the commit,
+- When current buffer is visiting a file and it exists in the revision,
   open blob buffer for that file
 - Otherwise, open tree object buffer for `default-directory`
 
@@ -30,9 +30,10 @@ Prompt user for commit to show.
 In git-walktree buffers, following keybinds can be used:
 
 - <kbd>^</kbd> Visit parent tree object
-- <kbd>P</kbd> Go parent commit
-- <kbd>N</kbd> Go child commit
+- <kbd>P</kbd> Go parent revision
+- <kbd>N</kbd> Go child revision
 - <kbd>C</kbd> Checkout current blob or tree object to working directory
+- <kbd>G</kbd> Go another revision
 
 Additionally, in tree object buffer:
 

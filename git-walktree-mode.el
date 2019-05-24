@@ -288,7 +288,6 @@ IGNORE-AUTO and NOCONFIRM, passed from `revert-buffer', are ignored."
     (define-key map "N" 'git-walktree-known-child-revision)
     (define-key map "^" 'git-walktree-up)
     (define-key map "G" 'git-walktree-mode-goto-revision)
-    (define-key map (kbd "DEL") 'git-walktree-back)
     (define-key map (kbd "C-m") 'git-walktree-mode-open-this)
     (define-key map "C" 'git-walktree-mode-checkout-to)
     map))
