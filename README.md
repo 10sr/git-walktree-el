@@ -1,7 +1,7 @@
 git-walktree.el
 ===============
 
-Walk through Git tree and blob objects
+Browse Git tree and blob objects
 
 
 What is This?
