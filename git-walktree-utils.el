@@ -154,6 +154,8 @@ If PATH is equal to \".\", return nil."
                                           "-t"
                                           commitish)))
     (cl-assert (string= type "commit")))
+  (setq commitish
+        (git-walktree--git-plumbing "rev-parse" commitish))
   (let ((parents (git-walktree--git-plumbing "show"
                                              "--no-patch"
                                              "--pretty=format:%P"
@@ -167,7 +169,8 @@ Both values should be object full sha1 names.")
 (defun git-walktree--put-child (parent child)
   "Register PARENT and CHILD relationship.
 PARENT should be a full sha1 object name."
-  ;; Any way to check if PARENT is a full SHA-1 object name?
+  (setq parent
+        (git-walktree--git-plumbing "rev-parse" parent))
   (let ((current (gethash parent git-walktree-known-child-revisions)))
     (unless (member child current)
       (puthash parent
