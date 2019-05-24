@@ -399,7 +399,7 @@ Use command  git describe --all --always COMMITISH."
 
 ;; TODO: Store view history
 ;; Or add variable like -previously-opened or -referer?
-(defun git-walktree--open-noselect (commitish path object)
+(defun git-walktree--open-noselect (commitish &optional path object)
   "Open buffer to view git object of COMMITISH:PATH.
 When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object full sha1  of
