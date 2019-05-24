@@ -10,7 +10,7 @@ What is this?
 `git-walktree` is a Git `ls-tree` browser.
 It has following features:
 
-- Browse tree objects of arbitrary commit without checking out
+- Browse tree objects of arbitrary commits without checking them out
   - Go subtrees
   - Visit blob objects
   - Go Parent and child commits of commit currently browsing
