@@ -220,18 +220,22 @@ It also copy text overlays."
     )
   "Command used show current commit object in tree buffer.")
 
-(defun git-walktree--load-treeish (commitish path treeish)
+(defun git-walktree--load-treeish (commitish path treeish &optional buffer)
   "Open git tree buffer of COMMITISH:PATH.
 
-TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
+TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH.
+
+When BUFFER is non-nil, use that buffer instead of get or create buffer.
+This is used for buffer reverting."
   (git-walktree--assert-path path)
   (cl-assert treeish)
+  (setq buffer
+        (or buffer
+            (git-walktree--get-create-tree-buffer commitish path)))
   (let ((point-tree-start nil)
         (type (git-walktree--git-plumbing "cat-file"
                                           "-t"
-                                          treeish))
-        (buffer (git-walktree--get-create-tree-buffer commitish path))
-        )
+                                          treeish)))
     (cl-assert (member type
                        '("commit" "tree")))
     (with-current-buffer buffer
@@ -301,15 +305,21 @@ Result will be inserted into current buffer."
              infile
              args))))
 
-(defun git-walktree--load-blob (commitish path blob)
+(defun git-walktree--load-blob (commitish path blob &optional buffer)
   "Open blob object of COMMITISH:PATH.
-BLOB should be a object full sha1 of COMMITISH:PATH."
+
+BLOB should be a blob object full-sha1 of COMMITISH:PATH.
+
+When BUFFER is non-nil, use that buffer instead of get or create buffer.
+This is used for buffer reverting."
   (git-walktree--assert-path path)
   (cl-assert blob)
-  (let* ((type (git-walktree--git-plumbing "cat-file"
-                                           "-t"
-                                           blob))
-         (buffer (git-walktree--get-create-blob-buffer commitish path)))
+  (setq buffer
+        (or buffer
+            (git-walktree--get-create-blob-buffer commitish path)))
+  (let ((type (git-walktree--git-plumbing "cat-file"
+                                          "-t"
+                                          blob)))
     (cl-assert (string= type "blob"))
     (with-current-buffer buffer
       (unless (and (string= git-walktree-current-commitish
