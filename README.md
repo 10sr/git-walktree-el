@@ -19,7 +19,7 @@ It has following features:
 Usage and Keybinds
 ------------------
 
-**`M-x git-walktree`** Open git-walktree buffer of commit
+**<kbd>M-x git-walktree</kbd>** to open git-walktree buffer of commit
 of commit specified by user.
 
 - When current buffer is visiting a file and it exists in the commit,
