@@ -135,15 +135,16 @@ instead return nil."
                              :type)
                   "commit")
          ;; For submodule cd to that directory and intialize
-         ;; TODO: Provide way to go back to known "parent" repository
-         ;; TODO: Or ask before switching repository
-         (with-temp-buffer
-           (cd (plist-get info :file))
-           (git-walktree--open-noselect (plist-get info
-                                                   :object)
-                                        nil
-                                        (plist-get info
-                                                   :object)))
+         (if (yes-or-no-p "Switch to submodule repository?")
+             (with-temp-buffer
+               ;; TODO: Make full path from root and path
+               (cd (plist-get info :file))
+               (git-walktree--open-noselect (plist-get info
+                                                       :object)
+                                            nil
+                                            (plist-get info
+                                                       :object)))
+           (message "Canceld by user"))
        (git-walktree--open-noselect git-walktree-current-commitish
                                     (git-walktree--join-path (plist-get info
                                                                         :file)
