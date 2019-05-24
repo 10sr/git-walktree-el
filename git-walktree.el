@@ -399,11 +399,14 @@ Use command  git describe --all --always COMMITISH."
 
 ;; TODO: Store view history
 ;; Or add variable like -previously-opened or -referer?
-(defun git-walktree--open-noselect (commitish &optional path object)
+(defun git-walktree--open-noselect (commitish &optional path object buffer)
   "Open buffer to view git object of COMMITISH:PATH.
 When PATH was given and non-nil open that, otherwise open root tree.
 When OBJECT was given and non-nil, assume that is the object full sha1  of
-COMMITISH:PATH without checking it."
+COMMITISH:PATH without checking it.
+
+When BUFFER is non-nil, use that buffer instead of get or create buffer.
+This is used for buffer reverting."
   (cl-assert commitish)
   (setq commitish
         (if git-walktree-describe-commitish
@@ -430,9 +433,9 @@ COMMITISH:PATH without checking it."
                                           object)))
     (pcase type
       ((or "commit" "tree")
-       (git-walktree--load-treeish commitish path object))
+       (git-walktree--load-treeish commitish path object buffer))
       ("blob"
-       (git-walktree--load-blob commitish path object))
+       (git-walktree--load-blob commitish path object buffer))
       (_
        (error "Type cannot handle: %s" type)))))
 
