@@ -377,6 +377,7 @@ When PATH is omitted or nil, it is calculated from current file or directory."
 
   (setq path
         (or path
+            git-walktree-current-path
             (git-walktree--path-in-repository (or buffer-file-name
                                                   default-directory))))
   (git-walktree--assert-path path)
