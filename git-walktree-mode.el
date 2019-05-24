@@ -137,8 +137,12 @@ instead return nil."
          ;; For submodule cd to that directory and intialize
          (if (yes-or-no-p "Switch to submodule repository?")
              (with-temp-buffer
-               ;; TODO: Make full path from root and path
-               (cd (plist-get info :file))
+               (let* ((path git-walktree-repository-root)
+                      (path (expand-file-name git-walktree-current-path
+                                              path))
+                      (path (expand-file-name (plist-get info :file)
+                                              path)))
+                 (cd path))
                (git-walktree--open-noselect (plist-get info
                                                        :object)
                                             nil
