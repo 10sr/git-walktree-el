@@ -4,7 +4,7 @@ git-walktree.el
 Walk through Git tree and blob objects
 
 
-What is this?
+What is This?
 -------------
 
 `git-walktree` is a Git `ls-tree` browser.
