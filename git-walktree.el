@@ -230,11 +230,11 @@ TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
         (type (git-walktree--git-plumbing "cat-file"
                                           "-t"
                                           treeish))
-        (buf (git-walktree--get-create-tree-buffer commitish path))
+        (buffer (git-walktree--get-create-tree-buffer commitish path))
         )
     (cl-assert (member type
                        '("commit" "tree")))
-    (with-current-buffer buf
+    (with-current-buffer buffer
       (unless (and (string= treeish
                             git-walktree-object-full-sha1)
                    (or (eq commitish
@@ -267,7 +267,7 @@ TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
                                           ;; "-r"
                                           "--abbrev"
                                           treeish)
-              (git-walktree--replace-into-buffer buf))
+              (git-walktree--replace-into-buffer buffer))
             ))
         (git-walktree-mode)
         (set-buffer-modified-p nil)
@@ -284,7 +284,7 @@ TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
           (git-walktree-mode--move-point-to-file)
           )
         ))
-    buf))
+    buffer))
 
 (defun git-walktree--call-process (&optional infile &rest args)
   "Call git command with input from INFILE and args ARGS.
@@ -309,9 +309,9 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
   (let* ((type (git-walktree--git-plumbing "cat-file"
                                            "-t"
                                            blob))
-         (buf (git-walktree--get-create-blob-buffer commitish path)))
+         (buffer (git-walktree--get-create-blob-buffer commitish path)))
     (cl-assert (string= type "blob"))
-    (with-current-buffer buf
+    (with-current-buffer buffer
       (unless (and (string= git-walktree-current-commitish
                             commitish)
                    (string= git-walktree-current-path
@@ -329,7 +329,7 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
                                           "cat-file"
                                           "-p"
                                           blob)
-              (git-walktree--replace-into-buffer buf))
+              (git-walktree--replace-into-buffer buffer))
             ;; When buffer was empty before insertion, set point to
             ;; beginning of buffer
             (when go-beginning-after-insert
@@ -357,7 +357,7 @@ BLOB should be a object full sha1 of COMMITISH:PATH."
             (cd dir)))
 
         ))
-    buf))
+    buffer))
 
 (defun git-walktree--open-noselect-safe-path (commitish &optional path)
   "Open git object of COMMITISH:PATH.
