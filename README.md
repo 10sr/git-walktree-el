@@ -19,7 +19,7 @@ It has following features:
 Usage and Keybinds
 ------------------
 
-**<kbd>M-x git-walktree</kbd>** to open git-walktree buffer.
+<kbd>M-x git-walktree</kbd> to open git-walktree buffer.
 Prompt user for revision to show.
 
 - When current buffer is visiting a file and it exists in the revision,
