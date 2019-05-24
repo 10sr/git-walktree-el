@@ -24,7 +24,7 @@ Prompt user for revision to show.
 
 - When current buffer is visiting a file and it exists in the revision,
   open blob buffer for that file
-- Otherwise, open tree object buffer for `default-directory`
+- Otherwise, open tree buffer for `default-directory`
 
 
 In git-walktree buffers, following keybinds can be used:
