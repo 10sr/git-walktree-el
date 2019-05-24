@@ -226,12 +226,12 @@ It also copy text overlays."
 TREEISH should be a tree-ish object full-sha1 of COMMITISH:PATH."
   (git-walktree--assert-path path)
   (cl-assert treeish)
-  (let* ((point-tree-start nil)
-         (type (git-walktree--git-plumbing "cat-file"
-                                           "-t"
-                                           treeish))
-         (buf (git-walktree--get-create-tree-buffer commitish path))
-         )
+  (let ((point-tree-start nil)
+        (type (git-walktree--git-plumbing "cat-file"
+                                          "-t"
+                                          treeish))
+        (buf (git-walktree--get-create-tree-buffer commitish path))
+        )
     (cl-assert (member type
                        '("commit" "tree")))
     (with-current-buffer buf
