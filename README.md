@@ -19,8 +19,8 @@ It has following features:
 Usage and Keybinds
 ------------------
 
-**<kbd>M-x git-walktree</kbd>** to open git-walktree buffer
-of commit specified by user.
+**<kbd>M-x git-walktree</kbd>** to open git-walktree buffer.
+Prompt user for commit to show.
 
 - When current buffer is visiting a file and it exists in the commit,
   open blob buffer for that file
