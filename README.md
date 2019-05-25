@@ -12,10 +12,11 @@ What is This?
 `git-walktree` is a Git `ls-tree` browser.
 It has following features:
 
-- Browse tree objects of arbitrary revisions without checking them out
-  - Go subtrees
+- Browse tree (and blob) objects of arbitrary revisions
+  without checking them out to working directory
+  - Go up and down tree objects
   - Visit blob objects
-  - Go Parent and child revisions
+  - Switch to parent and child revisions
 - Checkout (output) tree or blob object to current working directory
 
 Usage and Keybinds
@@ -31,11 +32,11 @@ Prompt user for revision to show.
 
 In git-walktree buffers, following keybinds can be used:
 
-- <kbd>^</kbd> Visit parent tree object
-- <kbd>P</kbd> Go parent revision
-- <kbd>N</kbd> Go child revision
+- <kbd>^</kbd> Go up to parent tree object
+- <kbd>P</kbd> Switch to parent revision
+- <kbd>N</kbd> Switch to child revision
 - <kbd>C</kbd> Checkout current blob or tree object to working directory
-- <kbd>G</kbd> Go another revision
+- <kbd>G</kbd> Switch to another revision (ask user)
 
 Additionally, in tree object buffer:
 
