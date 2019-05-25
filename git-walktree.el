@@ -1,10 +1,10 @@
-;;; git-walktree.el --- Walk through git tree and blob objects   -*- lexical-binding: t; -*-
+;;; git-walktree.el --- Browse Git tree and blob objects   -*- lexical-binding: t; -*-
 
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
 ;; URL: https://github.com/10sr/git-walktree-el
-;; Version: 0.0.1
+;; Version: 0.1.0
 ;; Keywords: utility git
-;; Package-Requires: ((git "0.1.1"))
+;; Package-Requires: ((git "0.1.1") (cl-lib "0.5"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -23,11 +23,20 @@
 
 ;;; Commentary:
 
-;; Walk through git revisions.
+;; `git-walktree' is a Git `ls-tree` browser.
+;; It has following features:
+
+;; - Browse tree objects of arbitrary revisions without checking them out
+;;   - Go subtrees
+;;   - Visit blob objects
+;;   - Go Parent and child revisions
+;; - Checkout (output) tree or blob object to current working directory
+
 
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'ansi-color)
 
 (require 'git-walktree-utils)
