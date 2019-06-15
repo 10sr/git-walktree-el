@@ -30,7 +30,7 @@ Prompt user for revision to show.
 - Otherwise, open tree buffer for `default-directory`
 
 
-In git-walktree buffers, following keybinds can be used:
+In git-walktree buffers, following keybinds are defined:
 
 - <kbd>^</kbd> Go up to parent tree object
 - <kbd>P</kbd> Switch to parent revision
