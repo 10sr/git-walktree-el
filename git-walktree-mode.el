@@ -159,11 +159,11 @@ instead return nil."
 (defalias 'git-walktree-mode-goto-revision
   'git-walktree-open)
 
-(defun git-walktree-mode--revert-buffer (&optional ignore-auto noconfirm)
+(defun git-walktree-mode--revert-buffer (&optional _ignore-auto _noconfirm)
   "Revert `git-walktree' buffer.
 
 Git-walktree sets `revert-buffer-function' to this function.  The args
-IGNORE-AUTO and NOCONFIRM, passed from `revert-buffer', are ignored."
+_IGNORE-AUTO and _NOCONFIRM, passed from `revert-buffer', are ignored."
   ;; TODO: Do nothing when current commitish is a full-sha1 object
   (git-walktree--open-noselect git-walktree-current-commitish
                                git-walktree-current-path
