@@ -76,6 +76,15 @@ If path is equal to \".\" return COMMITISH's root tree object.
 PATH will be always treated as relative to repository root."
   (cl-assert commitish)
   (git-walktree--assert-path path)
+
+  ;; commitish can be a tag
+  (setq commitish (git-walktree--git-plumbing "rev-parse"
+                                              commitish))
+  (let ((type (git-walktree--git-plumbing "cat-file"
+                                          "-t"
+                                          commitish)))
+    (cl-assert (or (string= type "commit"))))
+
   (if (string= path ".")
       (git-walktree--git-plumbing "show"
                                   "--no-patch"
