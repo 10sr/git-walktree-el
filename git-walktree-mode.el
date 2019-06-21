@@ -171,9 +171,12 @@ IGNORE-AUTO and NOCONFIRM, passed from `revert-buffer', are ignored."
                                (current-buffer)))
 
 (cl-defun git-walktree-mode-checkout-to (dest)
-  "Checkout blob or tree at point into DEST."
+  "Checkout blob or tree at point into DEST.
+
+Ask user for path to checkout."
   ;; TODO: Stop using interactive
-  (declare (interactive-only t))
+  (declare (interactive-only (git-walktree-checkout-blob
+                              git-walktree-checkout-tree)))
   (interactive
    (list (let ((default (expand-file-name git-walktree-current-path
                                           git-walktree-repository-root))
