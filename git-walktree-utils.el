@@ -26,9 +26,9 @@
 
 ;; Rule: This file only includes definitions of functions that:
 ;;   - Do not depends on git-walktree functions and variables defined outside of this file
-;;   - Do not create buffers
+;;   - Do not create public buffers
 ;;   - Do not modify states of existing buffers
-;;   - Do not modify variables that can be used outside of this file
+;;   - Do not modify variables that can be accessed from outside of this file
 ;; This file also has some variables.
 
 (defcustom git-walktree-git-executable "git"
@@ -203,7 +203,6 @@ PARENT should be a full sha1 object name."
 
 ;; TODO: Add aggressive search mode
 ;; https://stackoverflow.com/a/9870218
-;; git log --reverse --pretty=format:%H -n 1 --ancestry-path <PARENT>..HEAD
 (defun git-walktree--get-children (parent)
   "Get known children list of PARENT commit.
 PARENT should be a full sha1 object name."
