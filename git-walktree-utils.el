@@ -61,7 +61,7 @@ Returns first line of output without newline."
 (defun git-walktree--assert-resolved-type (obj types)
   "Assert if OBJ is one of TYPES.
 
-When OBJ is a tag, this function first resolve the object and then
+This function always resolves OBJ first and then
 check type, so OBJ will never be detected as one of \"tag\" type.
 This function returns the string of type of OBJ."
   (let* ((resolved (git-walktree--git-plumbing "rev-parse"
