@@ -64,6 +64,8 @@ Returns first line of output without newline."
 This function always resolves OBJ first and then
 check type, so OBJ will never be detected as one of \"tag\" type.
 This function returns the string of type of OBJ."
+  (cl-assert obj)
+  (cl-assert types)
   (let* ((resolved (git-walktree--git-plumbing "rev-parse"
                                                obj))
          (type (git-walktree--git-plumbing "cat-file"
@@ -94,10 +96,8 @@ PATH will be always treated as relative to repository root."
   ;; commitish can be a tag
   (setq commitish (git-walktree--git-plumbing "rev-parse"
                                               commitish))
-  (let ((type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          commitish)))
-    (cl-assert (or (string= type "commit"))))
+  (git-walktree--assert-resolved-type commitish
+                                      '("commit"))
 
   (if (string= path ".")
       (git-walktree--git-plumbing "show"
@@ -173,10 +173,8 @@ If PATH is equal to \".\", return nil."
 
 (defun git-walktree--parent-full-sha1 (commitish)
   "Return list of parent commits of COMMITISH in sha1 string."
-  (let ((type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          commitish)))
-    (cl-assert (string= type "commit")))
+  (git-walktree--assert-resolved-type commitish
+                                      '("commit"))
   (setq commitish
         (git-walktree--git-plumbing "rev-parse" commitish))
   (let ((parents (git-walktree--git-plumbing "show"

@@ -245,12 +245,9 @@ This is used for buffer reverting."
   (setq buffer
         (or buffer
             (git-walktree--get-create-tree-buffer commitish path)))
-  (let ((point-tree-start nil)
-        (type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          treeish)))
-    (cl-assert (member type
-                       '("commit" "tree")))
+  (git-walktree--assert-resolved-type treeish
+                                      '("commit" "tree"))
+  (let ((point-tree-start nil))
     (with-current-buffer buffer
       (unless (and (string= commitish
                             git-walktree-current-commitish)
@@ -328,69 +325,65 @@ This is used for buffer reverting."
   (setq buffer
         (or buffer
             (git-walktree--get-create-blob-buffer commitish path)))
-  (let ((type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          blob)))
-    (cl-assert (string= type "blob"))
-    (with-current-buffer buffer
-      (unless (and (string= git-walktree-current-commitish
-                            commitish)
-                   (string= git-walktree-current-path
-                            path)
-                   (string= git-walktree-object-full-sha1
-                            blob))
+  (git-walktree--assert-resolved-type blob
+                                      '("blob"))
+  (with-current-buffer buffer
+    (unless (and (string= git-walktree-current-commitish
+                          commitish)
+                 (string= git-walktree-current-path
+                          path)
+                 (string= git-walktree-object-full-sha1
+                          blob))
 
-        (unless (string= blob
-                         git-walktree-object-full-sha1)
-          ;; For running git command, go to repository root
-          (cd git-walktree-repository-root)
-          (let ((go-beginning-after-insert (eq (point-min)
-                                               (point-max)))
-                (inhibit-read-only t))
-            (with-temp-buffer
-              (git-walktree--call-process nil
-                                          "cat-file"
-                                          "-p"
-                                          blob)
-              (git-walktree--replace-into-buffer buffer))
-            ;; When buffer was empty before insertion, set point to
-            ;; beginning of buffer
-            (when go-beginning-after-insert
-              (goto-char (point-min))))
-          (setq buffer-file-name
-                (concat git-walktree-repository-root "/" path))
-          (normal-mode t)
-          ;; For asking filename when C-xC-s
-          (setq buffer-file-name nil)
-          (set-buffer-modified-p t)
-          (setq git-walktree-object-full-sha1 blob)
-          (setq buffer-read-only t)
-          (git-walktree-minor-mode 1))
+      (unless (string= blob
+                       git-walktree-object-full-sha1)
+        ;; For running git command, go to repository root
+        (cd git-walktree-repository-root)
+        (let ((go-beginning-after-insert (eq (point-min)
+                                             (point-max)))
+              (inhibit-read-only t))
+          (with-temp-buffer
+            (git-walktree--call-process nil
+                                        "cat-file"
+                                        "-p"
+                                        blob)
+            (git-walktree--replace-into-buffer buffer))
+          ;; When buffer was empty before insertion, set point to
+          ;; beginning of buffer
+          (when go-beginning-after-insert
+            (goto-char (point-min))))
+        (setq buffer-file-name
+              (concat git-walktree-repository-root "/" path))
+        (normal-mode t)
+        ;; For asking filename when C-xC-s
+        (setq buffer-file-name nil)
+        (set-buffer-modified-p t)
+        (setq git-walktree-object-full-sha1 blob)
+        (setq buffer-read-only t)
+        (git-walktree-minor-mode 1))
 
-        (setq git-walktree-buffer-file-name
-              (concat git-walktree-repository-root "/git@" commitish ":" path))
+      (setq git-walktree-buffer-file-name
+            (concat git-walktree-repository-root "/git@" commitish ":" path))
 
-        (setq git-walktree-current-commitish commitish)
-        (setq git-walktree-current-path path)
-        (let ((dir (expand-file-name (or (file-name-directory path)
-                                         ".")
-                                     git-walktree-repository-root)))
-          (when (and git-walktree-try-cd
-                     (file-directory-p dir))
-            (cd dir)))
+      (setq git-walktree-current-commitish commitish)
+      (setq git-walktree-current-path path)
+      (let ((dir (expand-file-name (or (file-name-directory path)
+                                       ".")
+                                   git-walktree-repository-root)))
+        (when (and git-walktree-try-cd
+                   (file-directory-p dir))
+          (cd dir)))
 
-        ))
-    buffer))
+      ))
+  buffer)
 
 (defun git-walktree--open-noselect-safe-path (commitish &optional path)
   "Open git object of COMMITISH:PATH.
 If PATH not found in COMMITISH tree, go up path and try again until found.
 When PATH is omitted or nil, it is calculated from current file or directory."
   (cl-assert commitish)
-  (let ((type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          commitish)))
-    (cl-assert (string= type "commit")))
+  (git-walktree--assert-resolved-type commitish
+                                      '("commit"))
 
   (setq path
         (or path
@@ -431,11 +424,8 @@ This is used for buffer reverting."
             (git-walktree--git-plumbing "describe" "--all" "--always" commitish)
           (git-walktree--git-plumbing "rev-parse" commitish)))
 
-  (let ((type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          commitish)))
-    (cl-assert (or (string= type "commit")
-                   (string= type "tag"))))
+  (git-walktree--assert-resolved-type commitish
+                                      '("commit"))
 
   (setq path (or path
                  "."))
@@ -448,16 +438,13 @@ This is used for buffer reverting."
                                            object))
   (cl-assert object)
 
-  (let ((type (git-walktree--git-plumbing "cat-file"
-                                          "-t"
-                                          object)))
+  (let ((type (git-walktree--assert-resolved-type object
+                                                  '("commit" "tree" "blob"))))
     (pcase type
       ((or "commit" "tree")
        (git-walktree--load-treeish commitish path object buffer))
       ("blob"
-       (git-walktree--load-blob commitish path object buffer))
-      (_
-       (error "Type cannot handle: %s" type)))))
+       (git-walktree--load-blob commitish path object buffer)))))
 
 
 ;;;###autoload
