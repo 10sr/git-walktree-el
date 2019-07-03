@@ -170,67 +170,66 @@ _IGNORE-AUTO and _NOCONFIRM, passed from `revert-buffer', are ignored."
                                nil
                                (current-buffer)))
 
-(cl-defun git-walktree-mode-checkout-to (dest)
-  "Checkout blob or tree at point into DEST.
+(cl-defun git-walktree-mode-checkout-to ()
+  "Checkout blob or tree at point.
 
 Ask user for path to checkout."
-  ;; TODO: Stop using interactive
   (declare (interactive-only (git-walktree-checkout-blob
                               git-walktree-checkout-tree)))
-  (interactive
-   (list (let ((default (expand-file-name git-walktree-current-path
-                                          git-walktree-repository-root))
-               (info (git-walktree-mode--get t)))
-           (when info
-             ;; Append base name of current line to default value
-             (setq default
-                   (expand-file-name (plist-get info :file)
-                                     default)))
-           (read-file-name "Checkout to: "
-                           default
-                           default))))
-  (setq dest
-        (expand-file-name dest))
-  (let (file type object)
+  (interactive)
+
+  (let (path type object)
     (let ((info (git-walktree-mode--get t)))
       (if info
-          (setq file (plist-get info :file)
+          (setq path (git-walktree--join-path (plist-get info :file)
+                                              git-walktree-current-path)
                 type (plist-get info :type)
                 object (plist-get info :object))
-        (setq file git-walktree-current-path
+        (setq path git-walktree-current-path
               type "tree"
               object git-walktree-object-full-sha1)))
+
     (pcase type
 
       ("blob"
-       ;; When DEST is a directory append the name to DEST
-       (when (file-directory-p dest)
-         (cl-assert file)
-         (let* ((name file)
-                (name (file-name-nondirectory name)))
-           (setq dest (expand-file-name name dest))))
-       (when (and (file-exists-p dest)
-                  (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
-         (message "Canceled by user")
-         (cl-return-from git-walktree-mode-checkout-to))
-       (git-walktree-checkout-blob object dest)
-       (message "%s (%s) checked out to %s"
-                file
-                object
-                dest))
+       (let* ((default (expand-file-name path
+                                         git-walktree-repository-root))
+              (dest (read-file-name "Checkout to blob to: "
+                                    default
+                                    default))
+              (dest (expand-file-name dest)))
+         ;; When DEST is a directory append the name to DEST
+         (when (file-directory-p dest)
+           (let ((name (file-name-nondirectory path)))
+             (setq dest (expand-file-name name dest))))
+         (when (and (file-exists-p dest)
+                    (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
+           (message "Canceled by user")
+           (cl-return-from git-walktree-mode-checkout-to))
+         (git-walktree-checkout-blob object dest)
+         (message "%s (%s) checked out to %s"
+                  file
+                  object
+                  dest)))
 
       ("tree"
-       (when (file-regular-p dest)
-         (error "Cannot checkout tree object to a file"))
-       (when (and (file-directory-p dest)
-                  (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
-         (message "Canceled by user")
-         (cl-return-from git-walktree-mode-checkout-to))
-       (git-walktree-checkout-tree object dest)
-       (message "%s (%s) checked out to %s"
-                file
-                object
-                dest))
+       (let* ((default (expand-file-name path
+                                         git-walktree-repository-root))
+              (dest (read-file-name "Checkout to tree to: "
+                                    default
+                                    default))
+              (dest (expand-file-name dest)))
+         (when (file-regular-p dest)
+           (error "Cannot checkout tree object to a file"))
+         (when (and (file-directory-p dest)
+                    (not (yes-or-no-p (format "Overwrite content of `%s'? " dest))))
+           (message "Canceled by user")
+           (cl-return-from git-walktree-mode-checkout-to))
+         (git-walktree-checkout-tree object dest)
+         (message "%s (%s) checked out to %s"
+                  file
+                  object
+                  dest)))
 
       (_
        (error "Cannot checkout this object")))))
@@ -307,6 +306,7 @@ Ask user for path to checkout."
 
 ;; git-walktree-minor-mode (minor-mode)
 
+;; TODO: Stop using interactive to get DEST?
 (cl-defun git-walktree-minor-mode-checkout-to (dest)
   "Checkout current blob into the working directory DEST."
   (declare (interactive-only git-walktree-checkout-blob))

@@ -161,12 +161,16 @@ If PATH is equal to \".\", return nil."
       ".")))
 
 (defun git-walktree--join-path (name base)
-  "Make path from NAME and BASE."
-  (git-walktree--assert-path name)
-  (git-walktree--assert-path base)
-  (if (string= base ".")
-      name
-    (concat base "/" name)))
+  "Make path from NAME and BASE.
+
+Args are same as `expand-file-name'.  For example,
+
+  (git-walktree--join-path \"foo\" \"bar/baz\") -> \"bar/baz/foo\""
+(git-walktree--assert-path name)
+(git-walktree--assert-path base)
+(if (string= base ".")
+    name
+  (concat base "/" name)))
 
 
 ;; Parents and Children of commits
