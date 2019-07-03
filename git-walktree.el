@@ -431,7 +431,6 @@ This is used for buffer reverting."
                  "."))
   (git-walktree--assert-path path)
 
-  ;; TODO: Fix when commitish is a tag
   (setq object (or object
                    (git-walktree--resolve-object commitish path)))
   (setq object (git-walktree--git-plumbing "rev-parse"
