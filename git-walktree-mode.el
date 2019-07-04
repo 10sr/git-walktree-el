@@ -208,7 +208,7 @@ Ask user for path to checkout."
            (cl-return-from git-walktree-mode-checkout-to))
          (git-walktree-checkout-blob object dest)
          (message "%s (%s) checked out to %s"
-                  file
+                  path
                   object
                   dest)))
 
@@ -227,7 +227,7 @@ Ask user for path to checkout."
            (cl-return-from git-walktree-mode-checkout-to))
          (git-walktree-checkout-tree object dest)
          (message "%s (%s) checked out to %s"
-                  file
+                  path
                   object
                   dest)))
 

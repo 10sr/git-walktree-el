@@ -61,17 +61,21 @@ Returns first line of output without newline."
 (defun git-walktree--assert-resolved-type (obj types)
   "Assert if OBJ is one of TYPES.
 
-This function always resolves OBJ first and then
+This function always resolves OBJ first using ^{} syntax and then
 check type, so OBJ will never be detected as one of \"tag\" type.
 This function returns the string of type of OBJ."
   (cl-assert obj)
   (cl-assert types)
   (let* ((resolved (git-walktree--git-plumbing "rev-parse"
-                                               obj))
+                                               (concat obj "^{}")))
          (type (git-walktree--git-plumbing "cat-file"
                                            "-t"
                                            resolved)))
-    (cl-assert (member type types))
+    (cl-assert (member type types)
+               nil
+               (format "Expected type of %s (%s) is one of %S, but actually %s"
+                       resolved obj types type)
+               )
     type)
   )
 
