@@ -80,7 +80,6 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
 (defvar git-walktree-blob-buffers-for-reuse-hash (make-hash-table :test 'equal)
   "Buffers to use when `git-walktree-reuse-blob-buffer' is non-ni.")
 
-;; TODO: Is tag o object not a commitish?
 (defvar-local git-walktree-current-commitish nil
   "Commitish name of currently browsing.")
 (put 'git-walktree-current-commitish
