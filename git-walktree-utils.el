@@ -66,8 +66,7 @@ check type, so OBJ will never be detected as one of \"tag\" type.
 This function returns the string of type of OBJ."
   (cl-assert obj)
   (cl-assert types)
-  (let* ((resolved (git-walktree--git-plumbing "rev-parse"
-                                               (concat obj "^{}")))
+  (let* ((resolved (git-walktree--rev-parse-deref-tags obj))
          (type (git-walktree--git-plumbing "cat-file"
                                            "-t"
                                            resolved)))
@@ -90,6 +89,13 @@ This function returns the string of type of OBJ."
                                   commitish)
     commitish))
 
+(defun git-walktree--rev-parse-deref-tags (obj)
+  "Resolve OBJ using git rev-parse and return full sha-1 name.
+
+This function just execute git rev-parse with ^{} syntax."
+  (git-walktree--git-plumbing "rev-parse"
+                              (concat obj "^{}")))
+
 (defun git-walktree--resolve-object (commitish path)
   "Return object full sha1 name of COMMITISIH:PATH.
 If path is equal to \".\" return COMMITISH's root tree object.
@@ -98,8 +104,7 @@ PATH will be always treated as relative to repository root."
   (git-walktree--assert-path path)
 
   ;; commitish can be a tag
-  (setq commitish (git-walktree--git-plumbing "rev-parse"
-                                              (concat commitish "^{}")))
+  (setq commitish (git-walktree--rev-parse-deref-tags commitish))
   (git-walktree--assert-resolved-type commitish
                                       '("commit"))
 
@@ -184,7 +189,7 @@ Args are same as `expand-file-name'.  For example,
   (git-walktree--assert-resolved-type commitish
                                       '("commit"))
   (setq commitish
-        (git-walktree--git-plumbing "rev-parse" commitish))
+        (git-walktree--rev-parse-deref-tags commitish))
   (let ((parents (git-walktree--git-plumbing "show"
                                              "--no-patch"
                                              "--pretty=format:%P"
@@ -199,7 +204,7 @@ Both values should be object full sha1 names.")
   "Register PARENT and CHILD relationship.
 PARENT should be a full sha1 object name."
   (setq parent
-        (git-walktree--git-plumbing "rev-parse" parent))
+        (git-walktree--rev-parse-deref-tags parent))
   (let ((current (gethash parent git-walktree-known-child-revisions)))
     (unless (member child current)
       (puthash parent

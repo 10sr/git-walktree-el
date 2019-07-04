@@ -433,7 +433,7 @@ This is used for buffer reverting."
   (setq commitish
         (if git-walktree-describe-commitish
             (git-walktree--git-plumbing "describe" "--all" "--always" commitish)
-          (git-walktree--git-plumbing "rev-parse" commitish)))
+          (git-walktree--rev-parse-deref-tags commitish)))
 
   (git-walktree--assert-resolved-type commitish
                                       '("commit"))
@@ -444,8 +444,7 @@ This is used for buffer reverting."
 
   (setq object (or object
                    (git-walktree--resolve-object commitish path)))
-  (setq object (git-walktree--git-plumbing "rev-parse"
-                                           object))
+  (setq object (git-walktree--rev-parse-deref-tags object))
   (cl-assert object)
 
   (let ((type (git-walktree--assert-resolved-type object
@@ -488,8 +487,8 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 If current path was not found in the parent revision try to go up path."
   (interactive)
   (cl-assert git-walktree-current-commitish)
-  (let* ((commit-full-sha1 (git-walktree--git-plumbing "rev-parse"
-                                                       git-walktree-current-commitish))
+  (let* ((commit-full-sha1 (git-walktree--rev-parse-deref-tags
+                            git-walktree-current-commitish))
          (parents (git-walktree--parent-full-sha1 commit-full-sha1)))
     (dolist (parent parents)
       (git-walktree--put-child parent
@@ -508,8 +507,8 @@ If current path was not found in the parent revision try to go up path."
 (defun git-walktree-known-child-revision ()
   "Open known revision of current path."
   (interactive)
-  (let* ((commit-full-sha1 (git-walktree--git-plumbing "rev-parse"
-                                                       git-walktree-current-commitish))
+  (let* ((commit-full-sha1 (git-walktree--rev-parse-deref-tags
+                            git-walktree-current-commitish))
          (children (git-walktree--get-children commit-full-sha1)))
     (if (< (length children)
            1)
