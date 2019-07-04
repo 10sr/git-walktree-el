@@ -80,12 +80,20 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
 (defvar git-walktree-blob-buffers-for-reuse-hash (make-hash-table :test 'equal)
   "Buffers to use when `git-walktree-reuse-blob-buffer' is non-ni.")
 
-;; TODO: tag objects break many things
 (defvar-local git-walktree-current-commitish nil
   "Commitish name of currently browsing.")
 (put 'git-walktree-current-commitish
      'permanent-local
      t)
+
+;; ;; TODO: tag objects break many things
+;; (defvar-local git-walktree-current-commit-full-sha1 nil
+;;   "Object name in full sha1 format of current buffer.
+;; This should be the result of git rev-parse `git-walktree-current-commitish'^{}."
+;;   nil)
+;; (put 'git-walktree-current-commit-full-sha1
+;;      'permanent-local
+;;      t)
 
 (defvar-local git-walktree-current-path nil
   "Path name currently visiting without leading and trailing slash.
