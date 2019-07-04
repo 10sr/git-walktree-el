@@ -99,7 +99,7 @@ PATH will be always treated as relative to repository root."
 
   ;; commitish can be a tag
   (setq commitish (git-walktree--git-plumbing "rev-parse"
-                                              commitish))
+                                              (concat commitish "^{}")))
   (git-walktree--assert-resolved-type commitish
                                       '("commit"))
 

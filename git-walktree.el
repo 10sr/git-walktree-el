@@ -80,6 +80,7 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
 (defvar git-walktree-blob-buffers-for-reuse-hash (make-hash-table :test 'equal)
   "Buffers to use when `git-walktree-reuse-blob-buffer' is non-ni.")
 
+;; TODO: Is tag o object not a commitish?
 (defvar-local git-walktree-current-commitish nil
   "Commitish name of currently browsing.")
 (put 'git-walktree-current-commitish
@@ -469,7 +470,7 @@ If target path is not found in COMMITISH tree, go up path and try again until fo
 
 (defun git-walktree-up (&optional commitish path)
   "Open parent directory of COMMITISH and PATH.
-If not given, value of current buffer will be used."
+@If not given, value of current buffer will be used."
   (interactive)
   (setq commitish
         (or commitish git-walktree-current-commitish))
