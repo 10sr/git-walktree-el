@@ -117,6 +117,7 @@ PATH will be always treated as relative to repository root."
                                                                              "--full-tree"
                                                                              commitish
                                                                              path))))
+      (cl-assert info "Cannot resolve object of %s %s" commitish path)
       (plist-get info :object))))
 
 
