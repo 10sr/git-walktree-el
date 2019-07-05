@@ -285,6 +285,8 @@ This is used for buffer reverting."
                 (insert (format "Contents of treeish object '%s:\n"
                                 treeish)))
               (setq point-tree-start (point))
+              ;; TODO: Fix when tree include japanese
+              ;; "\343\201\202\343\201\204\343\201\206"
               (git-walktree--call-process nil
                                           "ls-tree"
                                           ;; "-r"
