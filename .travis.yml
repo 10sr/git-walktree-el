@@ -1,0 +1,12 @@
+language: nix
+
+env:
+  - EMACS_CI=emacs-26-3
+  - EMACS_CI=emacs-snapshot
+
+install:
+  # The default "emacs" executable on the $PATH will now be the version named by $EMACS_CI
+  - bash <(curl https://raw.githubusercontent.com/purcell/nix-emacs-ci/master/travis-install)
+
+script:
+  make check
