@@ -306,32 +306,37 @@ Ask user for path to checkout."
 
 ;; git-walktree-minor-mode (minor-mode)
 
-;; TODO: Stop using interactive to get DEST?
-(cl-defun git-walktree-minor-mode-checkout-to (dest)
-  "Checkout current blob into the working directory DEST."
+(cl-defun git-walktree-minor-mode-checkout-to ()
+  "Checkout current blob into the working directory.
+
+Ask user for path to checkout."
   (declare (interactive-only git-walktree-checkout-blob))
-  (interactive
-   (list (let ((current-path (expand-file-name git-walktree-current-path
-                                               git-walktree-repository-root)))
-           (read-file-name "Checkout to: "
-                           current-path
-                           current-path))))
-  (setq dest
-        (expand-file-name dest))
-  ;; When DEST is a directory append the name to DEST
-  (when (file-directory-p dest)
-    (let ((name (file-name-nondirectory git-walktree-current-path)))
-      (setq dest (expand-file-name name dest))))
-  (let ((obj git-walktree-object-full-sha1))
-    (cl-assert obj)
-    (when (and (file-exists-p dest)
-               (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
-      (message "Canceled by user")
-      (cl-return-from git-walktree-minor-mode-checkout-to))
-    (git-walktree-checkout-blob obj dest)
-    (message "%s checked out to %s"
-             obj
-             dest)))
+  (interactive)
+  (let ((dest nil))
+    (setq dest
+          (let ((current-path (expand-file-name git-walktree-current-path
+                                                git-walktree-repository-root)))
+            (read-file-name "Checkout to: "
+                            current-path
+                            current-path)))
+    (setq dest
+          (expand-file-name dest))
+
+    ;; When DEST is a directory append the name to DEST
+    (when (file-directory-p dest)
+      (let ((name (file-name-nondirectory git-walktree-current-path)))
+        (setq dest (expand-file-name name dest))))
+
+    (let ((obj git-walktree-object-full-sha1))
+      (cl-assert obj)
+      (when (and (file-exists-p dest)
+                 (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
+        (message "Canceled by user")
+        (cl-return-from git-walktree-minor-mode-checkout-to))
+      (git-walktree-checkout-blob obj dest)
+      (message "%s checked out to %s"
+               obj
+               dest))))
 
 (defvar git-walktree-minor-mode-map
   (let ((map (make-sparse-keymap)))
