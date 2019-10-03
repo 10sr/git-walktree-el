@@ -278,7 +278,7 @@ Ask user for path to checkout."
         (4 'git-walktree-symlink-face)
         ))
     )
-  "Syntax highlighting for git-walktree mode.")
+  "Syntax highlighting for `git-walktree' mode.")
 
 (defvar git-walktree-mode-map
   (let ((map (make-sparse-keymap)))

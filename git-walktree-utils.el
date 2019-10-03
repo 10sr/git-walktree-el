@@ -139,7 +139,7 @@ When collection has just one element, return the first element without asking."
 ;; Paths in repository
 
 (defun git-walktree--assert-path (path)
-  "Assert that PATH is in valid format for use in git-walktree."
+  "Assert that PATH is in valid format for use in `git-walktree'."
   (cl-assert path)
   (cl-assert (not (string-match-p "\\`/" path)))
   (cl-assert (not (string-match-p "/\\'" path)))
