@@ -1,6 +1,9 @@
 ;;; git-walktree-read.el --- Read commitish from minibuffer   -*- lexical-binding: t; -*-
 
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
+;; Version: 0
+;; URL: https://github.com/10sr/git-walktree-el
+;; Package-Requires: ((emacs "26"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -27,10 +30,10 @@
 (require 'git)
 (defvar git-repo)
 
-(defvar git-walktree--read-history nil
+(defvar git-walktree-read--history nil
   "History for `git-walktree--read'.")
 
-(defun git-walktree--read (prompt)
+(defun git-walktree-read--read (prompt)
   "Read branch, tag or commit with PROMPT.
 This function is a fallback used when `magit-read-branch-or-commit' is
  not defined."
@@ -42,7 +45,7 @@ This function is a fallback used when `magit-read-branch-or-commit' is
                          nil  ; REQUIRE-MATCH
                          (or (thing-at-point 'symbol t)  ; INITIAL-INPUT
                              (git-on-branch))
-                         'git-walktree--read-history  ; HISTORY
+                         'git-walktree-read--history  ; HISTORY
                          )
         (user-error "Nothing selected"))))
 
@@ -51,7 +54,7 @@ This function is a fallback used when `magit-read-branch-or-commit' is
     (fset 'git-walktree-read-branch-or-commit
           'magit-read-branch-or-commit)
   (fset 'git-walktree-read-branch-or-commit
-        'git-walktree--read)
+        'git-walktree-read--read)
   )
 
 

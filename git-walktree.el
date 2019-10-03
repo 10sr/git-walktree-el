@@ -3,8 +3,8 @@
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
 ;; URL: https://github.com/10sr/git-walktree-el
 ;; Version: 0.1.0
-;; Keywords: utility git
-;; Package-Requires: ((git "0.1.1") (cl-lib "0.5"))
+;; Keywords: vc utility git
+;; Package-Requires: ((emacs "26") (git "0.1.1") (cl-lib "0.5"))
 
 ;; This file is not part of GNU Emacs.
 

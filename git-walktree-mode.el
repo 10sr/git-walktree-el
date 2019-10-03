@@ -1,6 +1,9 @@
 ;;; git-walktree-mode.el --- Major-mode and minor-mode for git-walktree   -*- lexical-binding: t; -*-
 
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
+;; Version: 0
+;; URL: https://github.com/10sr/git-walktree-el
+;; Package-Requires: ((emacs "26") (cl-lib "0.5"))
 
 ;; This file is not part of GNU Emacs.
 
