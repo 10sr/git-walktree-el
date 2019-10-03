@@ -370,7 +370,7 @@ This is used for buffer reverting."
         (set-buffer-modified-p t)
         (setq git-walktree-object-full-sha1 blob)
         (setq buffer-read-only t)
-        (git-walktree-minor-mode 1))
+        (git-walktree-blob-mode 1))
 
       (setq git-walktree-buffer-file-name
             (concat git-walktree-repository-root "/git@" commitish ":" path))

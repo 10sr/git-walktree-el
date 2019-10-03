@@ -22,7 +22,7 @@
 ;; Major-mode and minor-mode for git-walktree buffer.
 
 ;; git-walktree-mode: Major-mode for git-walktree tree buffer
-;; git-walktree-minor-mode: Minor-mode for git-walktree blob buffer
+;; git-walktree-blob-mode: Minor-mode for git-walktree blob buffer
 
 
 ;;; Code:
@@ -304,9 +304,9 @@ Ask user for path to checkout."
                 ))
   )
 
-;; git-walktree-minor-mode (minor-mode)
+;; git-walktree-blob-mode (minor-mode)
 
-(cl-defun git-walktree-minor-mode-checkout-to ()
+(cl-defun git-walktree-blob-mode-checkout-to ()
   "Checkout current blob into the working directory.
 
 Ask user for path to checkout."
@@ -332,32 +332,32 @@ Ask user for path to checkout."
       (when (and (file-exists-p dest)
                  (not (yes-or-no-p (format "Overwrite `%s'? " dest))))
         (message "Canceled by user")
-        (cl-return-from git-walktree-minor-mode-checkout-to))
+        (cl-return-from git-walktree-blob-mode-checkout-to))
       (git-walktree-checkout-blob obj dest)
       (message "%s checked out to %s"
                obj
                dest))))
 
-(defvar git-walktree-minor-mode-map
+(defvar git-walktree-blob-mode-map
   (let ((map (make-sparse-keymap)))
     ;; C overwrite view-mode keybind `view-kill-and-leave'
-    (define-key map "C" 'git-walktree-minor-mode-checkout-to)
+    (define-key map "C" 'git-walktree-blob-mode-checkout-to)
     (define-key map "P" 'git-walktree-parent-revision)
     (define-key map "N" 'git-walktree-known-child-revision)
     (define-key map "^" 'git-walktree-up)
     (define-key map "G" 'git-walktree-mode-goto-revision)
     map)
-  "Keymap for `git-walktree-minor-mode'.")
+  "Keymap for `git-walktree-blob-mode'.")
 
-(defvar git-walktree-minor-mode-overriding-map-alist
+(defvar git-walktree-blob-mode-overriding-map-alist
   (list
    (cons 'view-mode
          (let ((map (make-sparse-keymap)))
-           (define-key map "C" 'git-walktree-minor-mode-checkout-to)
+           (define-key map "C" 'git-walktree-blob-mode-checkout-to)
            map)))
   "Set `minor-mode-overriding-map-alist'.")
 
-(define-minor-mode git-walktree-minor-mode
+(define-minor-mode git-walktree-blob-mode
   "Minor-mode for git-walktree blob buffer."
   :lighter " GitWalktree"
   (setq-local revert-buffer-function
