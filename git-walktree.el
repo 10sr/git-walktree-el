@@ -241,8 +241,6 @@ It also copy text overlays."
     )
   "Command used show current commit object in tree buffer.")
 
-;; TODO: Fix when BUFFER is given
-;; 治った気がする？
 (defun git-walktree--load-treeish (commitish path treeish &optional buffer)
   "Open git tree buffer of COMMITISH:PATH.
 
