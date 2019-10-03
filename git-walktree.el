@@ -86,7 +86,6 @@ Otherwise use repository root for gitwalktree buffer's `default-directory'."
      'permanent-local
      t)
 
-;; ;; TODO: tag objects break many things
 ;; (defvar-local git-walktree-current-commit-full-sha1 nil
 ;;   "Object name in full sha1 format of current buffer.
 ;; This should be the result of git rev-parse `git-walktree-current-commitish'^{}."
