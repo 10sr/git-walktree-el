@@ -1,6 +1,9 @@
 ;;; git-walktree-utils.el --- Utilities for git-walktree   -*- lexical-binding: t; -*-
 
 ;; Author: 10sr <8.slashes [at] gmail [dot] com>
+;; Version: 0
+;; URL: https://github.com/10sr/git-walktree-el
+;; Package-Requires: ((emacs "26"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -139,7 +142,7 @@ When collection has just one element, return the first element without asking."
 ;; Paths in repository
 
 (defun git-walktree--assert-path (path)
-  "Assert that PATH is in valid format for use in git-walktree."
+  "Assert that PATH is in valid format for use in `git-walktree'."
   (cl-assert path)
   (cl-assert (not (string-match-p "\\`/" path)))
   (cl-assert (not (string-match-p "/\\'" path)))
@@ -258,4 +261,4 @@ Returns property list like (:mode MODE :type TYPE :object OBJECT :file FILE)."
 
 (provide 'git-walktree-utils)
 
-;;; git-walktree-utils ends here
+;;; git-walktree-utils.el ends here
