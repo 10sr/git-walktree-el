@@ -10,6 +10,8 @@ root := $(CURDIR)
 
 all: build
 
+check: build
+
 # test: build test-ert info
 
 build: $(elc)
