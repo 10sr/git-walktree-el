@@ -30,7 +30,7 @@
 ;;   - Go subtrees
 ;;   - Visit blob objects
 ;;   - Go Parent and child revisions
-;; - Checkout (output) tree or blob object to current working directory
+;; - Checkout (dump) tree or blob object to current working directory
 
 
 
