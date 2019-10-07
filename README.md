@@ -20,7 +20,7 @@ It has following features:
   - Go up and down tree objects
   - Visit blob objects
   - Switch to parent and child revisions
-- Checkout (output) tree or blob object to current working directory
+- Checkout (dump) tree or blob objects to current working directory
 
 Usage and Keybinds
 ------------------
