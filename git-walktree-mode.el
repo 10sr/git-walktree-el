@@ -349,6 +349,7 @@ Ask user for path to checkout."
     (define-key map "N" 'git-walktree-known-child-revision)
     (define-key map "^" 'git-walktree-up)
     (define-key map "G" 'git-walktree-mode-goto-revision)
+    (define-key map "q" 'quit-window)
     map)
   "Keymap for `git-walktree-blob-mode'.")
 
