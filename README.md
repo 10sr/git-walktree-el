@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/10sr/git-walktree-el.svg?branch=master)](https://travis-ci.org/10sr/git-walktree-el)
+[![MELPA](https://melpa.org/packages/git-walktree-badge.svg)](https://melpa.org/#/git-walktree)
 
 
 git-walktree.el
