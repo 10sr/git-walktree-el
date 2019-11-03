@@ -37,10 +37,10 @@ Prompt user for revision to show.
 In git-walktree buffers, following keybinds are defined:
 
 - <kbd>^</kbd> Go up to parent tree object
-- <kbd>P</kbd> Switch to parent revision
-- <kbd>N</kbd> Switch to child revision
+- <kbd>P</kbd> Move to parent revision
+- <kbd>N</kbd> Move to child revision
 - <kbd>C</kbd> Checkout current blob or tree object to working directory
-- <kbd>G</kbd> Switch to another revision (ask user)
+- <kbd>G</kbd> Move to another revision (ask user)
 
 Additionally, in tree object buffer:
 
